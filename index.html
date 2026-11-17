@@ -80,7 +80,7 @@
 
   <main class="max-w-4xl mx-auto px-3 sm:px-4 py-3 flex-1 w-full space-y-4">
 
-    <!-- 1. LASTE TAB (ESIMENE VAADE) -->
+    <!-- 1. LASTE TAB -->
     <section id="p-inc" class="space-y-3">
       <div class="flex justify-between items-center">
         <div>
@@ -90,7 +90,6 @@
         <button onclick="openM('newIncidentModal')" class="bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm">+ Uus olukord</button>
       </div>
 
-      <!-- Kiirvalikud (Avavad olemasoleva vestluse või loovad uue ilma duplikaatideta) -->
       <div class="bg-white p-2.5 rounded-2xl border border-slate-200 space-y-1.5">
         <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">⚡ Kiirvalikud (avab teema vestluse):</span>
         <div class="flex gap-1.5 overflow-x-auto scrollbar-none pb-0.5 text-[11px] font-semibold">
@@ -127,7 +126,7 @@
       </div>
     </section>
 
-    <!-- 2. KULDREEGLID & PÄEV (TOP 10 + VAATA VEEL + JÄRJEKORRA MUUTMINE) -->
+    <!-- 2. KULDREEGLID & PÄEV -->
     <section id="p-dash" class="hidden space-y-3">
       <div class="bg-gradient-to-r from-amber-500/10 via-indigo-500/10 to-emerald-500/10 border-2 border-indigo-300 p-4 rounded-3xl shadow-sm space-y-2.5">
         <div class="flex justify-between items-center">
@@ -157,16 +156,14 @@
       </div>
     </section>
 
-    <!-- 3. SUHE & SALAJANE (TEEMADEGA ÜHINE VESTLUS + PRIVAATNE PIN-IGA RUUM) -->
+    <!-- 3. SUHE & SALAJANE -->
     <section id="p-couple" class="hidden space-y-3">
       <div class="flex bg-slate-200/80 p-1 rounded-2xl gap-1 text-xs font-bold">
         <button id="subTabShared" onclick="switchCoupleSubTab('shared')" class="flex-1 py-1.5 rounded-xl bg-white text-indigo-700 shadow-xs text-center">👥 Meie Ühine Suhe</button>
         <button id="subTabPrivate" onclick="switchCoupleSubTab('private')" class="flex-1 py-1.5 rounded-xl text-slate-600 text-center">🔒 <span id="privateTabTitle">Salajane Ruum</span></button>
       </div>
 
-      <!-- Ühine -->
       <div id="viewSharedCouple" class="space-y-3">
-        <!-- Kiirvalikud suhtele -->
         <div class="bg-white p-2.5 rounded-2xl border space-y-1.5">
           <div class="flex justify-between items-center">
             <span class="text-[10px] font-bold text-slate-500 uppercase">⚡ Kiirvalikud (avab selle teema vestluse):</span>
@@ -201,7 +198,6 @@
         </div>
       </div>
 
-      <!-- Privaatne (PIN-iga kaitstud, ainult omanikule!) -->
       <div id="viewPrivateCouple" class="hidden space-y-3">
         <div class="bg-slate-900 text-white p-4 rounded-2xl flex justify-between items-center">
           <div><h4 class="font-black text-xs text-amber-400" id="privateHeaderName"></h4><p class="text-[10px] text-slate-400">Partner ei näe seda kunagi. Kõik sinu vestlused salvestuvad siia.</p></div>
@@ -240,7 +236,7 @@
       <div id="weeksGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
     </section>
 
-    <!-- 5. NORA KODUÕPE (ZODIAC + HD + PSÜHHOLOOGIA + TAIMER) -->
+    <!-- 5. NORA KODUÕPE -->
     <section id="p-school" class="hidden space-y-3">
       <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 rounded-3xl shadow-md flex flex-col sm:flex-row justify-between items-center gap-3">
         <div>
@@ -269,11 +265,11 @@
       </div>
     </section>
 
-    <!-- 6. MEIE PROFIILID (ZODIAC + HIINA + TÄPNE HUMAN DESIGN + MUUDETAV) -->
+    <!-- 6. MEIE PROFIILID -->
     <section id="p-profiles" class="hidden space-y-3">
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-1">
         <h2 class="font-extrabold text-sm text-slate-900">🧬 Meie Pere Täpsed Profiilid</h2>
-        <p class="text-xs text-slate-600">Siia on kokku kogutud teie sünniandmed, loomupärased energiakeskused ja tundlikkused – hea aeg-ajalt meeldetuletuseks lugeda. Iga inimese andmeid saab siin muuta ja AI uuendab profiili automaatselt.</p>
+        <p class="text-xs text-slate-600">Siia on kokku kogutud teie sünniandmed, loomupärased energiakeskused ja tundlikkused – hea aeg-ajalt meeldetuletuseks lugeda. Iga inimese andmeid saab siin muuta.</p>
       </div>
       <div id="familyProfilesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
     </section>
@@ -333,7 +329,7 @@
     </div>
   </div>
 
-  <!-- REEGLITE JÄRJESTAMISE JA MUUTMISE MODAAL -->
+  <!-- REEGLITE JÄRJESTAMISE MODAAL -->
   <div id="editRulesModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-5 border space-y-3 text-xs max-h-[85vh] overflow-y-auto">
       <div class="flex justify-between items-center"><h3 class="font-bold text-sm">📜 Kuldreeglite Järjekord (1–10 on esilehel)</h3><button onclick="closeM('editRulesModal')" class="text-lg font-bold">&times;</button></div>
@@ -343,7 +339,6 @@
     </div>
   </div>
 
-  <div id="archiveModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4"><div class="bg-white rounded-3xl max-w-md w-full p-5 border space-y-3 text-xs max-h-[80vh] overflow-y-auto"><div class="flex justify-between"><h3 class="font-bold">📦 Arhiveeritud Reeglid</h3><button onclick="closeM('archiveModal')">&times;</button></div><div id="archiveList" class="space-y-1.5"></div></div></div>
   <div id="settingsModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4"><div class="bg-white rounded-3xl max-w-md w-full p-5 border space-y-3 text-xs"><div class="flex justify-between"><h3 class="font-bold text-sm">⚙️ Seaded & AI Võti</h3><button onclick="closeM('settingsModal')">&times;</button></div><div class="p-3 bg-indigo-50 border border-indigo-200 rounded-2xl space-y-2"><label class="font-bold">🤖 Google AI Studio Võti (sünkroonib mõlema telefoni vahel):</label><input type="password" id="aiApiKeyInput" placeholder="AIzaSy..." class="w-full p-2 border rounded-xl bg-white font-mono"><div id="aiStatusMsg" class="hidden p-1.5 rounded-lg font-semibold"></div><div class="flex gap-2"><button onclick="saveAndTestAI()" class="flex-1 bg-indigo-600 text-white font-bold py-1.5 rounded-xl">Salvesta ja jaga perega</button><button onclick="clearAIKey()" class="px-3 bg-white border font-bold rounded-xl">Eemalda</button></div></div><button onclick="exportData()" class="w-full py-2 bg-slate-100 font-bold rounded-xl border">💾 Varukoopia (JSON)</button></div></div>
   <div id="logTrackerModal" class="fixed inset-0 bg-slate-900/40 z-50 hidden flex items-center justify-center p-4"><div class="bg-white rounded-3xl max-w-sm w-full p-5 border space-y-3 text-xs"><div class="flex justify-between"><h3 class="font-bold">Märgi päevikusse</h3><button onclick="closeM('logTrackerModal')">&times;</button></div><select id="trChild" class="w-full p-2 border rounded-xl"><option>Roma (3a)</option><option>Nora (7a)</option><option>Mõlemad</option></select><select id="trBehavior" class="w-full p-2 border rounded-xl"><option>Löömine</option><option>Hüsteeriline jonn</option><option>Loopimine</option><option>Solvumine / nutt</option></select><select id="trTrigger" class="w-full p-2 border rounded-xl"><option>Nälg / Veresuhkur</option><option>Väsimus</option><option>Ekraani sulgemine</option><option>Üleminek</option><option>Tähelepanuvajadus</option></select><button onclick="saveTrackerLog()" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl">Salvesta</button></div></div>
   <div id="gratitudeModal" class="fixed inset-0 bg-slate-900/40 z-50 hidden flex items-center justify-center p-4"><div class="bg-white rounded-3xl max-w-sm w-full p-5 border space-y-3 text-xs"><div class="flex justify-between"><h3 class="font-bold">💛 Saada tänu</h3><button onclick="closeM('gratitudeModal')">&times;</button></div><textarea id="gratitudeInput" rows="3" placeholder="Aitäh, et sa..." class="w-full p-2.5 border rounded-xl"></textarea><button onclick="sendGratitude()" class="w-full bg-amber-500 text-white font-bold py-2 rounded-xl">Saada</button></div></div>
@@ -361,7 +356,6 @@
     };
     const CLIENT_ID = 'dev_' + Math.random().toString(36).slice(2, 9);
 
-    // --- TÄPSED PERE PROFIILID (VERIFITSEERITUD PDF JOONISTELT!) ---
     const defaultFamilyProfiles = {
       Katre: {
         name: "Katre (Ema)", icon: "👩", date: "1981-09-19", time: "17:30", place: "Tartu, Eesti",
@@ -395,7 +389,6 @@
 
     let familyProfiles = JSON.parse(localStorage.getItem('fos_profiles_v3') || 'null') || defaultFamilyProfiles;
 
-    // --- 20 PROGRESSIIVSET 7-PÄEVAST EKSPERIMENTI ---
     const defaultWeeks = [
       { id: 1, title: "1. Nädal: 15-minuti rahulik maandumine", cat: "Närvisüsteem", goal: "Pärast töölt kojutulekut on 15 min ilma probleemide ja logistika arutamiseta.", why: "Kuna meil kõigil on avatud emotsionaalkeskus, vähendab 15 min vaikus õhtust pingeülekannet poole võrra." },
       { id: 2, title: "2. Nädal: 30-sekundi hingamine enne sõnu", cat: "Eneseregulatsioon", goal: "Kui miski ajab närvi, hinga 30 sek enne rääkimist.", why: "Kaitseb lapsi (eriti Romat ja Norat) täiskasvanu pinge neelamise eest." },
@@ -403,7 +396,7 @@
       { id: 4, title: "4. Nädal: 3x päevas puudutus ilma tagamõtteta", cat: "Paarisuhe", goal: "Kallistus või pai ilma küsimata midagi vastu.", why: "Taastab turvatunde ja läheduse, et kodu tunduks armastava pesana." },
       { id: 5, title: "5. Nädal: Kuulamine ilma parandamata", cat: "Suhtlus", goal: "Kui Katre räägib murest, kuula ja peegelda tunnet ilma kohese lahenduseta.", why: "Katre vajab enne lahendusi tunnet, et teda kuulatakse." },
       { id: 6, title: "6. Nädal: Null kriitikat partnerile laste ees", cat: "Austus", goal: "Ära paranda partnerit laste kuuldes, isegi kui teeksid ise teisiti.", why: "Veikko (3/5) vajab vabadust proovida ja tunda sinu usaldust." },
-      { id: 7, title: "7. Nädal: Kella 17:00 'Koka eelroog'", cat: "Bioloogia", goal: "Paku porgandit/kurki/juustu 30 min enne õhtusööki.", why: "Hoiab veresuhkru stabiilsena ja lõpetab näljast tingitud jonni." },
+      { id: 7, title: "7. Nädal: Kella 17:00 ennetav 'Koka eelroog'", cat: "Bioloogia", goal: "Paku porgandit/kurki/juustu 30 min enne õhtusööki.", why: "Hoiab veresuhkru stabiilsena ja lõpetab näljast tingitud jonni." },
       { id: 8, title: "8. Nädal: Informeerimise reegel", cat: "Katre & Veikko", goal: "Ütle enne plaani muutmist või lahkumist lühidalt ette: 'Ma teen nüüd nii...'", why: "Manifestor Katre ja kogu pere närvisüsteem armastab selget etteaimatavust." },
       { id: 9, title: "9. Nädal: Üks kodune ala lõpuni", cat: "Usaldus", goal: "Võta üks kodune ülesanne täielikult enda peale ilma teiselt küsimata.", why: "Võtab maha nähtamatu vaimse koorma." },
       { id: 10, title: "10. Nädal: Roma 'Vaikne pesa & kutsumine'", cat: "3a Poiss", goal: "Kutsu Romat mänguliselt appi käsu asemel ja anna talle vaikset omaette aega.", why: "Projektorina õitseb ta tunnustuse peale ja vajab taastumispause." },
@@ -421,14 +414,13 @@
 
     let weekProgress = JSON.parse(localStorage.getItem('fos_weeks_prog') || 'null') || {};
 
-    // --- SYSTEM PROMPT ---
     function getSystemContext() {
       const pText = Object.values(familyProfiles).map(p => `${p.name} (${p.date} ${p.time}, ${p.place}): ${p.zodiac} | ${p.chinese} | ${p.hdType}. ${p.hdDesc} ${p.summary}`).join('\n');
       const activeRules = commandments.slice(0, 10).join(' | ');
       const recentIssues = incidents.slice(0, 3).map(i => `${i.title} (${i.child})`).join(', ');
 
       return `Oled tark, sõbralik, neutraalne ja loogiline perenõustaja.
-REKLAAMIVABAD KULDREEGLID:
+KULDREEGLID:
 1. Räägi nagu soe, objektiivne sõber – MITTE KUNAGI käskivalt, süüdistavalt ega loengut pidades.
 2. ÄRA KUNAGI korda kasutaja enda kirjutatud näiteid sõna-sõnalt.
 3. ÄRA KUNAGI maini vastuses astroloogiat, tähemärke, hiina loomi ega Human Designi sõnu! Kasuta allolevat süvainfot ainult taustal, et valida psühholoogiliselt just sellele inimesele kõige sobivam serveerimisviis.
@@ -450,7 +442,7 @@ VASTUSE KOHUSTUSLIK STRUKTUUR (EESTI KEELES):
     async function callGeminiAPI(historyArray, newMessage, extraSystemPrompt = "") {
       const apiKey = localStorage.getItem('fos_ai_key');
       if (!apiKey) return "⚠️ Sisesta esmalt oma Google AI Studio võti ülevalt nupust '⚙️ Seaded'.";
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
       const contents = [
         { role: "user", parts: [{ text: getSystemContext() + "\n" + extraSystemPrompt }] },
         { role: "model", parts: [{ text: "Olen valmis toetama teie peret neutraalselt, loogiliselt ja soojalt." }] }
@@ -462,16 +454,45 @@ VASTUSE KOHUSTUSLIK STRUKTUUR (EESTI KEELES):
       });
       if (newMessage) contents.push({ role: "user", parts: [{ text: newMessage }] });
 
+      // 1. Esmalt proovi gemini-3.8-flash koos Google Search veebiotsinguga
+      const url38 = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
       try {
-        const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents, tools: [{ google_search: {} }], generationConfig: { temperature: 0.75, maxOutputTokens: 1600 } }) });
+        const res = await fetch(url38, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents,
+            tools: [{ google_search: {} }],
+            generationConfig: { temperature: 0.75, maxOutputTokens: 4096, thinkingConfig: { thinkingLevel: "LOW" } }
+          })
+        });
         if (res.ok) { const d = await res.json(); const txt = d.candidates?.[0]?.content?.parts?.map(p => p.text).join(''); if (txt) return txt; }
       } catch (e) {}
+
+      // 2. Fallback: gemini-3.8-flash ilma search toolita
       try {
-        const res2 = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents, generationConfig: { temperature: 0.75, maxOutputTokens: 1600 } }) });
-        if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
-        const d2 = await res2.json();
-        return d2.candidates?.[0]?.content?.parts?.map(p => p.text).join('') || "Vastus jäi tühjaks.";
-      } catch (err) { return `❌ Ühenduse viga: ${err.message}`; }
+        const res2 = await fetch(url38, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents,
+            generationConfig: { temperature: 0.75, maxOutputTokens: 4096, thinkingConfig: { thinkingLevel: "LOW" } }
+          })
+        });
+        if (res2.ok) { const d2 = await res2.json(); const txt2 = d2.candidates?.[0]?.content?.parts?.map(p => p.text).join(''); if (txt2) return txt2; }
+      } catch (e) {}
+
+      // 3. Fallback: gemini-3.5-flash-lite
+      try {
+        const urlLite = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`;
+        const res3 = await fetch(urlLite, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contents, generationConfig: { temperature: 0.75, maxOutputTokens: 4096 } })
+        });
+        if (!res3.ok) { const err = await res3.json(); throw new Error(err.error?.message || `HTTP ${res3.status}`); }
+        const d3 = await res3.json();
+        return d3.candidates?.[0]?.content?.parts?.map(p => p.text).join('') || "Vastus jäi tühjaks.";
+      } catch (err) {
+        return `❌ Ühenduse viga: ${err.message}`;
+      }
     }
 
     // --- AUDIO ETTELUGEMINE ---
@@ -492,7 +513,6 @@ VASTUSE KOHUSTUSLIK STRUKTUUR (EESTI KEELES):
     function stopSpeaking() { window.speechSynthesis.cancel(); document.getElementById('stopAudioBtn').classList.add('hidden'); }
     function startVoice(id) { const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) { alert("Brauser ei toeta häält."); return; } const r = new SR(); r.lang = 'et-EE'; document.getElementById(id).placeholder = "Kuulan..."; r.onresult = e => { document.getElementById(id).value = e.results[0][0].transcript; }; r.start(); }
 
-    // --- OLEKUD ---
     const userPins = { Veikko: '1111', Katre: '2222' };
     let currentUnlockedProfile = localStorage.getItem('fos_unlocked') || null;
     let pendingProfileTarget = null;
@@ -526,7 +546,6 @@ VASTUSE KOHUSTUSLIK STRUKTUUR (EESTI KEELES):
     let wins = JSON.parse(localStorage.getItem('fos_wins') || 'null') || ["Hommikul saime rahulikult uksest välja! 🚀"];
     let db = null, isCloud = false;
 
-    // --- INIT ---
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('voiceGenderBtn').innerText = voiceGender === 'male' ? '🧔 Meeshääl' : '👩 Naishääl';
       initFirebase(); checkAIStatus(); setProfile(profile);
@@ -537,7 +556,6 @@ VASTUSE KOHUSTUSLIK STRUKTUUR (EESTI KEELES):
       generateDailySecretMission(true);
     });
 
-    // --- FIREBASE ---
     function initFirebase() {
       try {
         if (!firebase.apps.length) firebase.initializeApp(BUILTIN_FIREBASE_CONFIG);
@@ -603,11 +621,9 @@ VASTUSE KOHUSTUSLIK STRUKTUUR (EESTI KEELES):
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
     }
 
-    // --- KULDREEGLID (TOP 10 + VAATA VEEL + ÜMBERJÄRJESTAMINE) ---
     function tryAddRuleToTop10(ruleText) {
       const clean = ruleText.trim(); if (!clean) return;
-      commandments.push(clean);
-      pushSharedState(); renderCommandments();
+      commandments.push(clean); pushSharedState(); renderCommandments();
       alert("Reegel lisatud! Saad selle asukohta muuta nupust '✏️ Järjesta & Muuda'.");
     }
     function renderCommandments() {
@@ -628,19 +644,14 @@ VASTUSE KOHUSTUSLIK STRUKTUUR (EESTI KEELES):
         <div class="flex items-center gap-1 p-1.5 bg-slate-50 border rounded-xl">
           <span class="text-[10px] font-bold text-slate-400 w-4">${i+1}.</span>
           <input type="text" value="${c}" id="rule_${i}" onchange="commandments[${i}]=this.value;pushSharedState();renderCommandments();" class="flex-1 text-xs bg-transparent outline-none">
-          <button onclick="moveRule(${i},-1)" class="px-1 text-slate-500 hover:text-indigo-600" ${i===0?'disabled':''}>⬆️</button>
-          <button onclick="moveRule(${i},1)" class="px-1 text-slate-500 hover:text-indigo-600" ${i===commandments.length-1?'disabled':''}>⬇️</button>
+          <button onclick="moveRule(${i},-1)" class="px-1 text-slate-500" ${i===0?'disabled':''}>⬆️</button>
+          <button onclick="moveRule(${i},1)" class="px-1 text-slate-500" ${i===commandments.length-1?'disabled':''}>⬇️</button>
           <button onclick="commandments.splice(${i},1);pushSharedState();renderCommandments();renderEditRules();" class="text-rose-500 font-bold px-1">&times;</button>
         </div>`).join('');
     }
-    function moveRule(i, dir) {
-      const target = i + dir; if (target < 0 || target >= commandments.length) return;
-      const temp = commandments[i]; commandments[i] = commandments[target]; commandments[target] = temp;
-      pushSharedState(); renderCommandments(); renderEditRules();
-    }
+    function moveRule(i, dir) { const t = i + dir; if (t < 0 || t >= commandments.length) return; const tmp = commandments[i]; commandments[i] = commandments[t]; commandments[t] = tmp; pushSharedState(); renderCommandments(); renderEditRules(); }
     function addNewRulePrompt() { const r = prompt("Uus kuldreegel:"); if (r) { commandments.push(r.trim()); pushSharedState(); renderCommandments(); renderEditRules(); } }
 
-    // --- KIIRVALIKUD (AVAVAD OLEMASOLEVA TEEMA VESTLUSE!) ---
     async function openOrStartTopic(mode, topicId, childOrSub, title, initialPrompt) {
       if (mode === 'inc') {
         const existing = incidents.find(i => i.id === topicId);
@@ -657,7 +668,6 @@ VASTUSE KOHUSTUSLIK STRUKTUUR (EESTI KEELES):
       }
     }
 
-    // --- VESTLUSTE RENDERDAMINE ---
     function renderChatListHelper(arr, boxId) {
       const b = document.getElementById(boxId);
       b.innerHTML = arr.map(m => {
@@ -689,7 +699,6 @@ VASTUSE KOHUSTUSLIK STRUKTUUR (EESTI KEELES):
     function renderPlans() { document.getElementById('plansList').innerHTML = incidents.filter(i=>i.gameplan).map(p=>`<div class="step-card bg-amber-50 border-2 border-amber-300 p-4 rounded-2xl space-y-2"><div class="flex justify-between"><h4 class="font-extrabold text-xs">${p.title}</h4><span class="text-[9px] bg-amber-200 px-2 rounded-full font-bold">${p.child}</span></div><div class="text-xs border-t border-amber-200 pt-2">${formatMsg(p.gameplan)}</div><div class="pt-2 flex justify-end no-print"><button onclick="tab('inc');selectInc('${p.id}')" class="text-xs font-bold text-indigo-700 bg-white border px-3 py-1 rounded-xl">💬 Jätka vestlust</button></div></div>`).join(''); }
     function deleteCurrentIncident() { if(!confirm("Kustutada?"))return; incidents=incidents.filter(i=>i.id!==currentId); currentId=incidents[0]?.id||null; pushSharedState(); renderIncList(); if(currentId)selectInc(currentId); renderPlans(); }
 
-    // --- SUHTE TEEMAD ---
     function renderCoupleTopicList() { document.getElementById('coupleTopicList').innerHTML = coupleTopics.map(t => `<div onclick="selectCoupleTopic('${t.id}')" class="p-2.5 rounded-xl cursor-pointer border ${t.id===currentCoupleId?'bg-indigo-50 border-indigo-300':'bg-slate-50'}"><h4 class="font-bold text-xs line-clamp-1">${t.title}</h4><p class="text-[10px] text-slate-500 mt-0.5 line-clamp-1">${t.messages[t.messages.length-1]?.text||''}</p></div>`).join(''); }
     function selectCoupleTopic(id) { currentCoupleId=id; const top=coupleTopics.find(t=>t.id===id); if(!top)return; document.getElementById('coupleChatTitle').innerText=top.title; renderCoupleTopicList(); renderCoupleChat(); }
     function renderCoupleChat() { const top=coupleTopics.find(t=>t.id===currentCoupleId); if(top) renderChatListHelper(top.messages, 'coupleChatBox'); }
@@ -698,11 +707,9 @@ VASTUSE KOHUSTUSLIK STRUKTUUR (EESTI KEELES):
     async function generateCoupleReply(top, userText) { const lid='cl_'+Date.now(); top.messages.push({sender:'Family OS (Sõber)',text:'Mõtlen kaasa...',tempId:lid}); renderCoupleChat(); const rep=await callGeminiAPI(top.messages,userText,"Ühine paarinõustamine: neutraalne, sõbralik, too välja mõlema poole võimalikud mõtted/lõksud ja uus lähenemine."); top.messages=top.messages.filter(m=>!m.tempId); top.messages.push({sender:'Family OS (Sõber)',text:rep}); renderCoupleChat(); pushSharedState(); }
     function deleteCoupleTopic() { if(!confirm("Kustutada teema?"))return; coupleTopics=coupleTopics.filter(t=>t.id!==currentCoupleId); currentCoupleId=coupleTopics[0]?.id||null; pushSharedState(); renderCoupleTopicList(); if(currentCoupleId)selectCoupleTopic(currentCoupleId); }
 
-    // --- PRIVAATNE CHAT ---
     function renderPrivateChat() { renderChatListHelper(privateChats[profile] || [], 'privateChatBox'); }
     async function sendPrivateMsg(e) { e.preventDefault(); const i=document.getElementById('privateChatInput'), t=i.value.trim(); if(!t)return; i.value=''; if(!privateChats[profile])privateChats[profile]=[]; privateChats[profile].push({sender:profile,text:t}); renderPrivateChat(); const lid='pl_'+Date.now(); privateChats[profile].push({sender:'Nõustaja (Salajane)',text:'Mõtlen kaasa...',tempId:lid}); renderPrivateChat(); const rep=await callGeminiAPI(privateChats[profile],t,`See on ${profile} privaatne vestlus.`); privateChats[profile]=privateChats[profile].filter(m=>!m.tempId); privateChats[profile].push({sender:'Nõustaja (Salajane)',text:rep}); renderPrivateChat(); localStorage.setItem('fos_private_chats',JSON.stringify(privateChats)); if(isCloud&&db)db.collection('family_os').doc(`private_${profile}`).set({messages:privateChats[profile],clientId:CLIENT_ID}); }
 
-    // --- KODUÕPE, PROFIILID, NÄDALAD, PÄEVIK, ROLLIMÄNG ---
     function renderSchoolChat() { renderChatListHelper(schoolChat, 'schoolChatBox'); }
     async function sendSchoolMsg(e) { e.preventDefault(); const i=document.getElementById('schoolChatInput'), t=i.value.trim(); if(!t)return; i.value=''; schoolChat.push({sender:profile,text:t}); renderSchoolChat(); const lid='sl_'+Date.now(); schoolChat.push({sender:'Family OS (Sõber)',text:'Mõtlen Nora jaoks parima viisi...',tempId:lid}); renderSchoolChat(); const rep=await callGeminiAPI(schoolChat,t,"Teema: Nora (7a) koduõpe."); schoolChat=schoolChat.filter(m=>!m.tempId); schoolChat.push({sender:'Family OS (Sõber)',text:rep}); renderSchoolChat(); pushSharedState(); }
 
@@ -751,7 +758,8 @@ VASTUSE KOHUSTUSLIK STRUKTUUR (EESTI KEELES):
     function verifyPin() { if(document.getElementById('pinInput').value.trim()===userPins[pendingProfileTarget]){ currentUnlockedProfile=pendingProfileTarget; localStorage.setItem('fos_unlocked',currentUnlockedProfile); setProfile(pendingProfileTarget); closeM('pinModal'); } else document.getElementById('pinError').classList.remove('hidden'); }
     function lockProfile() { currentUnlockedProfile=null; localStorage.removeItem('fos_unlocked'); switchCoupleSubTab('shared'); }
     function setProfile(p) { profile=p; localStorage.setItem('fos_profile',p); document.getElementById('btnV').className=p==='Veikko'?'px-2 py-1 text-xs font-bold rounded-lg bg-white shadow-sm text-indigo-700':'px-2 py-1 text-xs font-bold rounded-lg text-slate-500'; document.getElementById('btnK').className=p==='Katre'?'px-2 py-1 text-xs font-bold rounded-lg bg-white shadow-sm text-rose-700':'px-2 py-1 text-xs font-bold rounded-lg text-slate-500'; document.getElementById('privateTabTitle').innerText=`${p} Salajane`; document.getElementById('privateHeaderName').innerText=`${p} Salajane Ruum`; renderPrivateChat(); generateDailySecretMission(true); }
-    async function generateDailySecretMission(isInit) { const card=document.getElementById('dailyMissionCard'), k=localStorage.getItem('fos_ai_key'); if(!isInit&&k){ card.innerHTML="<em>Koostan missiooni...</em>"; card.innerHTML=formatMsg(await callGeminiAPI([],`Koosta ${profile}-le tänaseks 1 ootamatu, soe, salajane üllatusmissioon partneri rõõmustamiseks.`)); return; } card.innerHTML = profile==='Veikko' ? "🎯 <strong>Võta täna õhtul üks kodune asi algusest lõpuni enda peale ilma küsimata!</strong>" : "🎯 <strong>Tunnusta Veikkot siiralt laste ees ja anna talle 15 min rahulikku aega koju jõudes.</strong>"; }
+
+    async function generateDailySecretMission(isInit) { const card=document.getElementById('dailyMissionCard'), k=localStorage.getItem('fos_ai_key'); if(!isInit&&k){ card.innerHTML="<em>Koostan missiooni...</em>"; card.innerHTML=formatMsg(await callGeminiAPI([],`Koosta ${profile}-le tänaseks 1 ootamatu, soe, salajane üllatusmissioon partneri rõõmustamiseks, arvestades nende iseloomu.`)); return; } card.innerHTML = profile==='Veikko' ? "🎯 <strong>Võta täna õhtul üks kodune asi algusest lõpuni enda peale ilma küsimata!</strong>" : "🎯 <strong>Tunnusta Veikkot siiralt laste ees ja anna talle 15 min rahulikku aega koju jõudes.</strong>"; }
     function tab(n) { ['inc','dash','couple','weeks','school','profiles','tracker','roleplay','plans'].forEach(t=>{ document.getElementById('p-'+t).classList.add('hidden'); document.getElementById('t-'+t).className='py-1.5 px-2.5 rounded-lg text-slate-500 whitespace-nowrap font-medium'; }); document.getElementById('p-'+n).classList.remove('hidden'); document.getElementById('t-'+n).className='py-1.5 px-2.5 rounded-lg bg-indigo-50 text-indigo-700 font-bold whitespace-nowrap'; }
     function switchCoupleSubTab(sub) { if(sub==='private'&&currentUnlockedProfile!==profile){requestSwitchProfile(profile);return;} document.getElementById('viewSharedCouple').classList.toggle('hidden',sub==='private'); document.getElementById('viewPrivateCouple').classList.toggle('hidden',sub!=='private'); }
     function saveTrackerLog() { trackerLogs.unshift({id:Date.now(),child:document.getElementById('trChild').value,behavior:document.getElementById('trBehavior').value,trigger:document.getElementById('trTrigger').value,time:new Date().toLocaleTimeString('et-EE',{hour:'2-digit',minute:'2-digit'}),date:new Date().toLocaleDateString('et-EE')}); pushSharedState(); closeM('logTrackerModal'); renderTrackerLogs(); }
@@ -768,8 +776,18 @@ VASTUSE KOHUSTUSLIK STRUKTUUR (EESTI KEELES):
     let timerSeconds=1200, timerInterval=null;
     function toggleStudyTimer(){ const b=document.getElementById('timerBtn'); if(timerInterval){clearInterval(timerInterval);timerInterval=null;b.innerText="Jätka";}else{b.innerText="Paus";timerInterval=setInterval(()=>{if(timerSeconds>0){timerSeconds--;const m=Math.floor(timerSeconds/60).toString().padStart(2,'0'),s=(timerSeconds%60).toString().padStart(2,'0');document.getElementById('timerDisplay').innerText=`${m}:${s}`;}else{clearInterval(timerInterval);alert("🎉 20 min täis! Paus!");}},1000);} }
     function resetStudyTimer(){ clearInterval(timerInterval);timerInterval=null;timerSeconds=1200;document.getElementById('timerBtn').innerText="Start";document.getElementById('timerDisplay').innerText="20:00"; }
-    function checkAIStatus() { const k=localStorage.getItem('fos_ai_key'); if(k&&k.startsWith('AIza')){ document.getElementById('aiDot').className='w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse'; document.getElementById('aiBadgeText').innerText='🤖 AI OK'; document.getElementById('aiApiKeyInput').value=k; } else { document.getElementById('aiDot').className='w-1.5 h-1.5 rounded-full bg-rose-500'; document.getElementById('aiBadgeText').innerText='⚙️ Lisa AI Võti'; } }
-    async function saveAndTestAI() { const k=document.getElementById('aiApiKeyInput').value.trim(), msg=document.getElementById('aiStatusMsg'); if(!k)return; msg.className='p-1.5 rounded-lg font-semibold bg-indigo-50 text-indigo-900 block'; msg.innerText='Kontrollin...'; try { const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${k}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:"Tere!"}]}]})}); if(res.ok){ localStorage.setItem('fos_ai_key',k); checkAIStatus(); pushSharedState(); msg.className='p-1.5 rounded-lg font-semibold bg-emerald-50 text-emerald-900 block'; msg.innerText='✅ Ühendus töötab ja jagatud teise telefoniga!'; setTimeout(()=>closeM('settingsModal'),1200); } else { const e=await res.json(); throw new Error(e.error?.message||"Vigane võti"); } } catch(e) { msg.className='p-1.5 rounded-lg font-semibold bg-rose-50 text-rose-900 block'; msg.innerText='❌ '+e.message; } }
+
+    function checkAIStatus() { const k=localStorage.getItem('fos_ai_key'); if(k&&k.startsWith('AIza')){ document.getElementById('aiDot').className='w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse'; document.getElementById('aiBadgeText').innerText='🤖 Gemini 3.8 OK'; document.getElementById('aiApiKeyInput').value=k; } else { document.getElementById('aiDot').className='w-1.5 h-1.5 rounded-full bg-rose-500'; document.getElementById('aiBadgeText').innerText='⚙️ Lisa AI Võti'; } }
+    async function saveAndTestAI() {
+      const k=document.getElementById('aiApiKeyInput').value.trim(), msg=document.getElementById('aiStatusMsg'); if(!k)return;
+      msg.className='p-1.5 rounded-lg font-semibold bg-indigo-50 text-indigo-900 block'; msg.innerText='Kontrollin Gemini 3.8 Flash ühendust...';
+      try {
+        let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${k}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: "Tere!" }] }], generationConfig: { thinkingConfig: { thinkingLevel: "LOW" } } }) });
+        if (!res.ok) res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${k}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: "Tere!" }] }] }) });
+        if (res.ok) { localStorage.setItem('fos_ai_key', k); checkAIStatus(); pushSharedState(); msg.className='p-1.5 rounded-lg font-semibold bg-emerald-50 text-emerald-900 block'; msg.innerText='✅ Gemini 3.8 Flash töötab ja jagatud teise telefoniga!'; setTimeout(()=>closeM('settingsModal'),1200); }
+        else { const e=await res.json(); throw new Error(e.error?.message||"Vigane võti"); }
+      } catch(e) { msg.className='p-1.5 rounded-lg font-semibold bg-rose-50 text-rose-900 block'; msg.innerText='❌ '+e.message; }
+    }
     function clearAIKey() { localStorage.removeItem('fos_ai_key'); document.getElementById('aiApiKeyInput').value=''; checkAIStatus(); }
     function exportData() { const blob=new Blob([JSON.stringify({incidents,coupleTopics,schoolChat,privateChats,commandments,trackerLogs,wins,weekProgress,familyProfiles},null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='family-os-varukoopia.json'; a.click(); }
   </script>
