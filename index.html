@@ -3,1341 +3,775 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Family OS • Meie Kodu & Suhe</title>
+  <title>Family OS • Katre, Veikko, Nora & Roma</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="theme-color" content="#4f46e5">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
     @media print {
-      header, nav, #chatForm, .no-print, #sosModal, #newIncidentModal, #syncModal, #aiModal, #pinModal { display: none !important; }
+      header, nav, #chatForm, .no-print, #sosModal, #newIncidentModal, #settingsModal, #pinModal { display: none !important; }
       #p-plans { display: block !important; }
-      .step-card { border: 2px solid #000 !important; page-break-inside: avoid; margin-bottom: 20px; box-shadow: none !important; }
+      .step-card { border: 2px solid #000 !important; page-break-inside: avoid; margin-bottom: 16px; box-shadow: none !important; }
     }
     .scrollbar-none::-webkit-scrollbar { display: none; }
     .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
-    
-    /* Hingamise animatsioon */
-    @keyframes breathe {
-      0%, 100% { transform: scale(1); opacity: 0.6; }
-      50% { transform: scale(1.4); opacity: 1; }
-    }
+    @keyframes breathe { 0%, 100% { transform: scale(1); opacity: 0.65; } 50% { transform: scale(1.38); opacity: 1; } }
     .animate-breathe { animation: breathe 8s infinite ease-in-out; }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col pb-20 antialiased">
 
-  <!-- SOS HÄIRE PARTNERILE -->
+  <!-- SOS PARTNERI HÄIRE -->
   <div id="partnerSosBanner" class="hidden bg-rose-600 text-white px-4 py-3 text-center text-xs font-extrabold flex justify-between items-center shadow-lg sticky top-0 z-50 animate-bounce">
-    <span id="partnerSosText">🚨 TÄHELEPANU: Partner vajab kohe abi lastega!</span>
-    <button onclick="dismissSosAlert()" class="bg-white text-rose-700 px-3 py-1 rounded-lg font-bold ml-2 shadow">Võtan üle!</button>
+    <span id="partnerSosText">🚨 Partner vajab abi!</span>
+    <button onclick="dismissSosAlert()" class="bg-white text-rose-700 px-3 py-1 rounded-lg font-bold ml-2">Võtan üle!</button>
   </div>
 
   <!-- PÄIS -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-    <div class="max-w-4xl mx-auto px-4 py-2 flex justify-between items-center gap-2">
+    <div class="max-w-4xl mx-auto px-3 sm:px-4 py-2 flex justify-between items-center gap-2">
       <div class="flex items-center gap-2">
-        <span class="text-2xl cursor-pointer" onclick="tab('dash')">⚡</span>
+        <span class="text-2xl cursor-pointer" onclick="tab('inc')">⚡</span>
         <div>
           <div class="flex items-center gap-1.5 flex-wrap">
-            <h1 class="text-xs sm:text-sm font-extrabold text-slate-900 leading-tight">Family OS</h1>
-            
-            <button onclick="openM('syncModal')" id="syncBadge" class="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-800 flex items-center gap-1 border border-amber-200">
-              <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Kohalik
-            </button>
-
-            <button onclick="openM('aiModal')" id="aiBadge" class="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-700 flex items-center gap-1 border border-slate-200 hover:bg-indigo-50 transition">
-              <span id="aiDot" class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> <span id="aiBadgeText">🤖 AI</span>
+            <h1 class="text-xs sm:text-sm font-extrabold text-slate-900">Family OS</h1>
+            <span id="syncBadge" class="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200">...</span>
+            <button onclick="openM('settingsModal')" class="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-700 flex items-center gap-1 border">
+              <span id="aiDot" class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> <span id="aiBadgeText">⚙️ Seaded</span>
             </button>
           </div>
-          <p class="text-[10px] text-slate-500">Veikko & Katre • 3a Poiss & 7a Tütar</p>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span class="text-[10px] text-slate-500">Hääl:</span>
+            <button onclick="toggleVoiceGender()" id="voiceGenderBtn" class="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-1.5 py-0.2 rounded border border-indigo-200">👩 Naishääl</button>
+            <button onclick="stopSpeaking()" id="stopAudioBtn" class="hidden text-[10px] font-bold text-rose-600 bg-rose-50 px-1.5 rounded border border-rose-200">⏹️ Vaigista</button>
+          </div>
         </div>
       </div>
 
       <div class="flex items-center gap-1.5">
-        <button onclick="triggerSOS()" class="bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-extrabold px-3 py-1.5 rounded-xl text-xs shadow-sm flex items-center gap-1 transition">
-          🚨 SOS
-        </button>
-
-        <!-- PIN-KOODIGA KAITSTUD PROFIILILÜLITI -->
+        <button onclick="triggerSOS()" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold px-2.5 py-1.5 rounded-xl text-xs shadow-sm">🚨 SOS</button>
         <div class="flex bg-slate-100 p-0.5 rounded-xl border border-slate-200">
-          <button id="btnV" onclick="requestSwitchProfile('Veikko')" class="px-2 py-1 text-xs font-bold rounded-lg text-slate-500 transition">🧔 Veikko</button>
-          <button id="btnK" onclick="requestSwitchProfile('Katre')" class="px-2 py-1 text-xs font-bold rounded-lg text-slate-500 transition">👩 Katre</button>
+          <button id="btnV" onclick="requestSwitchProfile('Veikko')" class="px-2 py-1 text-xs font-bold rounded-lg text-slate-500">🧔 Veikko</button>
+          <button id="btnK" onclick="requestSwitchProfile('Katre')" class="px-2 py-1 text-xs font-bold rounded-lg text-slate-500">👩 Katre</button>
         </div>
       </div>
     </div>
 
-    <!-- Menüü -->
-    <nav class="max-w-4xl mx-auto px-3 flex gap-2 overflow-x-auto scrollbar-none text-xs font-bold border-t border-slate-100 py-1">
-      <button onclick="tab('dash')" id="t-dash" class="py-1.5 px-2.5 rounded-lg border-b-2 border-indigo-600 text-indigo-600 whitespace-nowrap">📜 10 Käsku & Päev</button>
-      <button onclick="tab('couple')" id="t-couple" class="py-1.5 px-2.5 rounded-lg text-slate-500 whitespace-nowrap">❤️ Meie Suhe & Privaatne</button>
-      <button onclick="tab('inc')" id="t-inc" class="py-1.5 px-2.5 rounded-lg text-slate-500 whitespace-nowrap">💬 Laste Juhtumid</button>
-      <button onclick="tab('tracker')" id="t-tracker" class="py-1.5 px-2.5 rounded-lg text-slate-500 whitespace-nowrap">📊 Käitumispäevik</button>
-      <button onclick="tab('school')" id="t-school" class="py-1.5 px-2.5 rounded-lg text-slate-500 whitespace-nowrap">📚 Koduõpe (7a)</button>
+    <!-- Menüü: Lapsed on esimene! -->
+    <nav class="max-w-4xl mx-auto px-3 flex gap-1.5 overflow-x-auto scrollbar-none text-xs font-bold border-t border-slate-100 py-1">
+      <button onclick="tab('inc')" id="t-inc" class="py-1.5 px-2.5 rounded-lg bg-indigo-50 text-indigo-700 whitespace-nowrap">💬 Nora & Roma</button>
+      <button onclick="tab('dash')" id="t-dash" class="py-1.5 px-2.5 rounded-lg text-slate-500 whitespace-nowrap">📜 Kuldreeglid</button>
+      <button onclick="tab('couple')" id="t-couple" class="py-1.5 px-2.5 rounded-lg text-slate-500 whitespace-nowrap">❤️ Suhe & Salajane</button>
+      <button onclick="tab('weeks')" id="t-weeks" class="py-1.5 px-2.5 rounded-lg text-slate-500 whitespace-nowrap">🏆 20 Nädalat</button>
+      <button onclick="tab('school')" id="t-school" class="py-1.5 px-2.5 rounded-lg text-slate-500 whitespace-nowrap">📚 Nora Koduõpe</button>
+      <button onclick="tab('profiles')" id="t-profiles" class="py-1.5 px-2.5 rounded-lg text-slate-500 whitespace-nowrap">🧬 Meie Profiilid</button>
+      <button onclick="tab('tracker')" id="t-tracker" class="py-1.5 px-2.5 rounded-lg text-slate-500 whitespace-nowrap">📊 Päevik</button>
       <button onclick="tab('roleplay')" id="t-roleplay" class="py-1.5 px-2.5 rounded-lg text-slate-500 whitespace-nowrap">🎭 Rollimäng</button>
       <button onclick="tab('plans')" id="t-plans" class="py-1.5 px-2.5 rounded-lg text-slate-500 whitespace-nowrap">📋 Sammud</button>
-      <button onclick="tab('tools')" id="t-tools" class="py-1.5 px-2.5 rounded-lg text-slate-500 whitespace-nowrap">🧰 Nipid</button>
     </nav>
   </header>
 
   <main class="max-w-4xl mx-auto px-3 sm:px-4 py-3 flex-1 w-full space-y-4">
 
-    <!-- 1. PÄEV & 10 KULDREEGLIT (HOMMIKUNE ANKUR) -->
-    <section id="p-dash" class="space-y-3">
-      
-      <!-- 10 KÄSKU VANEMATELE -->
-      <div class="bg-gradient-to-r from-amber-500/10 via-indigo-500/10 to-emerald-500/10 border-2 border-indigo-300 p-4 rounded-3xl shadow-sm space-y-2.5">
-        <div class="flex justify-between items-center">
-          <div class="flex items-center gap-2">
-            <span class="text-xl">📜</span>
-            <div>
-              <h2 class="text-xs sm:text-sm font-black text-slate-900 tracking-tight">MEIE PERE 10 KULDREEGLIT</h2>
-              <p class="text-[10px] text-slate-500">Loe igal hommikul läbi – nii ei pea tülide ajal jalgratast leiutama!</p>
-            </div>
-          </div>
-          <button onclick="openM('editRulesModal')" class="text-[11px] font-bold text-indigo-700 bg-white border border-indigo-200 px-2.5 py-1 rounded-xl shadow-2xs">✏️ Muuda</button>
-        </div>
-
-        <div id="commandmentsList" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs"></div>
-      </div>
-
-      <!-- TÄNUPURK -->
-      <div class="bg-gradient-to-r from-amber-50 to-rose-50 border border-amber-200 p-3.5 rounded-2xl shadow-xs">
-        <div class="flex justify-between items-center mb-1.5">
-          <h3 class="font-bold text-xs text-amber-950 flex items-center gap-1.5">
-            <span>💛</span> <span>Tänupurk: Märka partnerit täna</span>
-          </h3>
-          <button onclick="openM('gratitudeModal')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-[10px] px-2.5 py-1 rounded-lg transition shadow-xs">+ Saada musi/tänu</button>
-        </div>
-        <div id="latestGratitude" class="text-xs text-slate-700 italic bg-white/80 p-2.5 rounded-xl border border-amber-100">
-          "Aitäh, et sa hommikul lastega kannatlikuks jäid. Sa oled mulle väga kallis." – Katre
-        </div>
-      </div>
-
-      <!-- Rollikaardid -->
-      <div id="cardRole" class="space-y-2"></div>
-
-      <!-- VÄIKESED VÕIDUD -->
-      <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-        <div class="flex justify-between items-center">
-          <h4 class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
-            <span>🎉</span> <span>Meie Päeva Väikesed Võidud</span>
-          </h4>
-          <button onclick="addWinPrompt()" class="text-indigo-600 text-xs font-bold hover:underline">+ Lisa võit</button>
-        </div>
-        <div id="winsList" class="space-y-1.5 text-xs text-slate-600"></div>
-      </div>
-    </section>
-
-    <!-- 2. MEIE SUHE (ÜHINE + SALAJANE RUUM) -->
-    <section id="p-couple" class="hidden space-y-3">
-      
-      <!-- Alammenüü: Ühine vs Minu Privaatne -->
-      <div class="flex bg-slate-200/80 p-1 rounded-2xl gap-1 text-xs font-bold">
-        <button id="subTabShared" onclick="switchCoupleSubTab('shared')" class="flex-1 py-1.5 rounded-xl bg-white text-indigo-700 shadow-xs text-center">
-          👥 Meie Ühine Vestlus & Suhe
-        </button>
-        <button id="subTabPrivate" onclick="switchCoupleSubTab('private')" class="flex-1 py-1.5 rounded-xl text-slate-600 text-center flex items-center justify-center gap-1">
-          <span>🔒</span> <span id="privateTabTitle">Minu Salajane Nõustaja</span>
-        </button>
-      </div>
-
-      <!-- ÜHINE VAADE (Mõlemale nähtav) -->
-      <div id="viewSharedCouple" class="space-y-3">
-        <!-- Õhtune rituaal -->
-        <div class="bg-gradient-to-r from-rose-50 to-indigo-50 border border-rose-200 p-4 rounded-2xl">
-          <h3 class="font-bold text-xs text-rose-950 mb-1 flex items-center gap-1.5">
-            <span>🌙</span> <span>Õhtune 3-minuti rituaal (Käest kinni, ekraanideta):</span>
-          </h3>
-          <p class="text-xs text-slate-700 leading-relaxed">
-            Ärge rääkige logistikast. Küsige teineteiselt: 
-            <em class="font-semibold text-rose-900 block mt-1">"Mis oli täna see hetk, kus sa tundsid end kõige rohkem üksi või kurnatuna? Ja millal tundsid minu tuge?"</em>
-          </p>
-        </div>
-
-        <!-- Detailne olukorrajuhis paarile -->
-        <div id="coupleDeepAdvice" class="space-y-2"></div>
-
-        <!-- Ühine suhte chat vanade teemade ajalooga -->
-        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-          <div class="border-b pb-2 flex justify-between items-center">
-            <div>
-              <h4 class="font-bold text-xs text-slate-900 flex items-center gap-1">
-                <span>🛋️</span> <span>Ühine Paarinõustaja (Mõlemad loevad ja kirjutavad)</span>
-              </h4>
-              <p class="text-[10px] text-slate-500">Kõik vanad teemad ja lahendused säilivad siin ajaloos.</p>
-            </div>
-          </div>
-          <div id="coupleChatBox" class="h-64 overflow-y-auto space-y-2.5 text-xs p-1"></div>
-          <form onsubmit="sendCoupleMsg(event)" class="pt-2 border-t flex gap-2">
-            <input id="coupleChatInput" required placeholder="Tõstata teema (lähedus, väsimus, kohustused)..." class="flex-1 text-xs border border-slate-300 bg-slate-50 focus:bg-white rounded-xl px-3 py-2 outline-none">
-            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">Aruta</button>
-          </form>
-        </div>
-      </div>
-
-      <!-- PRIVAATNE VAADE (AINULT SELLELE VANEMALE) -->
-      <div id="viewPrivateCouple" class="hidden space-y-3">
-        <div class="bg-slate-900 text-white p-4 rounded-2xl shadow-md space-y-2">
-          <div class="flex justify-between items-center">
-            <div class="flex items-center gap-2">
-              <span class="text-lg">🤫</span>
-              <div>
-                <h4 class="font-black text-xs text-amber-400" id="privateHeaderName">Veikko Isiklik Nõustamisruum</h4>
-                <p class="text-[10px] text-slate-400">See vestlus on salajane ja kaitstud sinu PIN-koodiga. Partner ei näe seda.</p>
-              </div>
-            </div>
-            <button onclick="lockProfile()" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-1 rounded-lg border border-slate-700">🔒 Lukusta</button>
-          </div>
-        </div>
-
-        <div id="privateTipsCard" class="bg-amber-50/80 border border-amber-200 p-3.5 rounded-2xl text-xs space-y-1.5"></div>
-
-        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-          <div class="border-b pb-1.5">
-            <h4 class="font-bold text-xs text-slate-900">Salajane nõuandja (Räägi ausalt oma murest)</h4>
-            <p class="text-[10px] text-slate-500">Küsi nõu oma tunnete, intiimsuse, pahameele või partneri käitumise kohta.</p>
-          </div>
-          <div id="privateChatBox" class="h-64 overflow-y-auto space-y-2.5 text-xs p-1"></div>
-          <form onsubmit="sendPrivateMsg(event)" class="pt-2 border-t flex gap-2">
-            <input id="privateChatInput" required placeholder="Küsi salaja nõu (nt 'Katre on kogu aeg väsinud, mida teha?')..." class="flex-1 text-xs border border-slate-300 bg-slate-50 focus:bg-white rounded-xl px-3 py-2 outline-none">
-            <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">Küsi</button>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3. LASTE JUHTUMID -->
-    <section id="p-inc" class="hidden space-y-3">
+    <!-- 1. LASTE TAB (ESIMENE VAADE) -->
+    <section id="p-inc" class="space-y-3">
       <div class="flex justify-between items-center">
         <div>
-          <h2 class="text-sm font-bold text-slate-800">Laste Olukorrad & Sõbralik Tugi</h2>
-          <p class="text-[10px] text-slate-500">Räägime asjadest ausalt ja eluliselt – mitte raamatuliku kantseliidiga</p>
+          <h2 class="text-sm font-bold text-slate-800">Nora (7a) ja Roma (3a)</h2>
+          <p class="text-[10px] text-slate-500">Vestle sõbraga, jätka varasemaid teemasid ja uuenda Samme</p>
         </div>
-        <button onclick="openM('newIncidentModal')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm transition active:scale-95">
-          + Uus olukord
-        </button>
+        <button onclick="openM('newIncidentModal')" class="bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm">+ Uus olukord</button>
+      </div>
+
+      <!-- Kiirvalikud (Avavad olemasoleva vestluse või loovad uue ilma duplikaatideta) -->
+      <div class="bg-white p-2.5 rounded-2xl border border-slate-200 space-y-1.5">
+        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">⚡ Kiirvalikud (avab teema vestluse):</span>
+        <div class="flex gap-1.5 overflow-x-auto scrollbar-none pb-0.5 text-[11px] font-semibold">
+          <button onclick="openOrStartTopic('inc', 'topic_roma_fixed', 'Roma (3a)', 'Roma kindel soov enne sööki', 'Roma võttis pähe, et tahab ühte asja kohe praegu enne sööki ega taha oodata. Kuidas rahulikult suunata?')" class="bg-amber-100 text-amber-900 px-2.5 py-1 rounded-xl whitespace-nowrap border border-amber-200">🥛 Kindel soov enne sööki</button>
+          <button onclick="openOrStartTopic('inc', 'topic_nora_stuck', 'Nora (7a)', 'Nora ütleb et ei oska ja heitub', 'Nora hakkas raskema koha juures nutma ja ütles, et ei oska ega taha enam proovida.')" class="bg-purple-100 text-purple-900 px-2.5 py-1 rounded-xl whitespace-nowrap border border-purple-200">📚 Nora: Ma ei oska!</button>
+          <button onclick="openOrStartTopic('inc', 'topic_roma_laugh', 'Roma (3a)', 'Roma naerab piiride peale', 'Kui talle piiri pannakse, hakkab Roma hoopis naerma või jookseb eemale.')" class="bg-rose-100 text-rose-900 px-2.5 py-1 rounded-xl whitespace-nowrap border border-rose-200">😆 Naerab keelu peale</button>
+          <button onclick="openOrStartTopic('inc', 'topic_hungry_wait', 'Nora & Roma', 'Näljakriis enne õhtusööki', 'Lapsed on näljased ja küsivad snäkki just siis, kui toit veel valmib.')" class="bg-emerald-100 text-emerald-900 px-2.5 py-1 rounded-xl whitespace-nowrap border border-emerald-200">🥕 Nälg enne sööki</button>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div id="incList" class="bg-white p-2 rounded-2xl border border-slate-200 max-h-[220px] md:max-h-[560px] overflow-y-auto space-y-1.5 shadow-sm"></div>
+        <div id="incList" class="bg-white p-2 rounded-2xl border max-h-[190px] md:max-h-[540px] overflow-y-auto space-y-1.5 shadow-sm"></div>
 
-        <div class="md:col-span-2 bg-white p-3 rounded-2xl border border-slate-200 flex flex-col h-[520px] md:h-[560px] shadow-sm">
+        <div class="md:col-span-2 bg-white p-3 rounded-2xl border flex flex-col h-[500px] md:h-[540px] shadow-sm">
           <div class="border-b pb-2 flex justify-between items-center gap-2">
             <div>
-              <h3 id="chatTitle" class="font-bold text-xs text-slate-900 truncate max-w-[200px] sm:max-w-xs">Vali juhtum</h3>
+              <h3 id="chatTitle" class="font-bold text-xs text-slate-900 truncate max-w-[180px] sm:max-w-xs">Vali olukord</h3>
               <span id="chatSub" class="text-[10px] text-slate-400 font-medium"></span>
             </div>
-            <div class="flex items-center gap-1.5">
-              <button onclick="makePlan()" id="btnPlan" class="text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg font-bold transition flex items-center gap-1 shadow-sm">
-                📋 Tee Sammud
-              </button>
-              <button onclick="deleteCurrentIncident()" class="text-slate-400 hover:text-rose-600 p-1 text-xs" title="Kustuta juhtum">🗑️</button>
+            <div class="flex items-center gap-1">
+              <button onclick="makePlan()" id="btnPlan" class="text-[10px] bg-emerald-600 text-white px-2.5 py-1 rounded-lg font-bold shadow-xs">📋 Uuenda Samme</button>
+              <button onclick="deleteCurrentIncident()" class="text-slate-400 hover:text-rose-600 p-1 text-xs">🗑️</button>
             </div>
           </div>
 
           <div id="chatBox" class="flex-1 overflow-y-auto py-3 space-y-3 text-xs pr-1"></div>
 
-          <form onsubmit="sendMsg(event)" class="pt-2 border-t flex gap-2" id="chatForm">
-            <input id="chatInput" required placeholder="Kirjuta siia lisa (nt 'Ta keeldus ja hakkas mind jalaga lööma')..." class="flex-1 text-xs border border-slate-300 bg-slate-50 focus:bg-white rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500">
-            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition active:scale-95 shadow-sm">
-              Saada
-            </button>
+          <form onsubmit="sendMsg(event)" class="pt-2 border-t flex gap-1.5" id="chatForm">
+            <button type="button" onclick="startVoice('chatInput')" class="bg-slate-100 text-slate-700 px-2.5 rounded-xl text-sm border">🎙️</button>
+            <input id="chatInput" required placeholder="Jätka vestlust või täpsusta olukorda..." class="flex-1 text-xs border bg-slate-50 focus:bg-white rounded-xl px-3 py-2 outline-none">
+            <button type="submit" class="bg-indigo-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl">Saada</button>
           </form>
         </div>
       </div>
     </section>
 
-    <!-- 4. KÄITUMISE & PÄÄSTIKUTE PÄEVIK (TRIGGER TRACKER) -->
-    <section id="p-tracker" class="hidden space-y-3">
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+    <!-- 2. KULDREEGLID & PÄEV (TOP 10 + VAATA VEEL + JÄRJEKORRA MUUTMINE) -->
+    <section id="p-dash" class="hidden space-y-3">
+      <div class="bg-gradient-to-r from-amber-500/10 via-indigo-500/10 to-emerald-500/10 border-2 border-indigo-300 p-4 rounded-3xl shadow-sm space-y-2.5">
         <div class="flex justify-between items-center">
           <div>
-            <h3 class="font-extrabold text-sm text-slate-900 flex items-center gap-1.5">
-              <span>📊</span> <span>Käitumise & Päästikute Kiirregistreerija</span>
-            </h3>
-            <p class="text-[11px] text-slate-500">Märgi konflikt 3 sekundiga – äpp tuvastab mustrid ja peidetud põhjused.</p>
+            <h2 class="text-xs sm:text-sm font-black text-slate-900">📜 MEIE PERE KULDREEGLID</h2>
+            <p class="text-[10px] text-slate-500">Top 10 on nähtaval igal hommikul; kõiki reegleid saab muuta ja järjestada.</p>
           </div>
-          <button onclick="openM('logTrackerModal')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition shadow-xs">+ Märgi intsidend</button>
+          <button onclick="openM('editRulesModal')" class="text-[10px] font-bold text-indigo-700 bg-white border border-indigo-200 px-2.5 py-1 rounded-xl">✏️ Järjesta & Muuda</button>
         </div>
+        <div id="commandmentsList" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs"></div>
+        <div id="moreRulesBtnWrap" class="hidden text-center pt-1">
+          <button onclick="toggleShowAllRules()" id="toggleRulesBtn" class="text-xs font-bold text-indigo-700 bg-white px-4 py-1.5 rounded-xl border border-indigo-200 shadow-2xs"></button>
+        </div>
+      </div>
 
-        <!-- Mustrite analüüs -->
-        <div id="trackerPatterns" class="p-3 bg-indigo-50/70 border border-indigo-200 rounded-xl text-xs space-y-1">
-          <strong class="text-indigo-950 font-bold">🔍 Tuvastatud mustrid:</strong>
-          <p id="patternText" class="text-slate-700">Märkmeid kogutakse. Varsti kuvatakse siin korduvad päästikud.</p>
+      <div class="bg-gradient-to-r from-amber-50 to-rose-50 border border-amber-200 p-3.5 rounded-2xl">
+        <div class="flex justify-between items-center mb-1.5">
+          <h3 class="font-bold text-xs text-amber-950">💛 Tänupurk: Märka partnerit</h3>
+          <button onclick="openM('gratitudeModal')" class="bg-amber-500 text-white font-bold text-[10px] px-2.5 py-1 rounded-lg">+ Saada tänu</button>
         </div>
+        <div id="latestGratitude" class="text-xs text-slate-700 italic bg-white/80 p-2.5 rounded-xl border border-amber-100">"Aitäh, et sa hommikul rahulikuks jäid." – Katre</div>
+      </div>
 
-        <!-- Logide ajalugu -->
-        <div class="space-y-1.5">
-          <h4 class="text-xs font-bold text-slate-700">Viimased märgitud olukorrad:</h4>
-          <div id="trackerLogsList" class="space-y-1.5 text-xs max-h-64 overflow-y-auto"></div>
-        </div>
+      <div class="bg-white p-3.5 rounded-2xl border shadow-sm space-y-2">
+        <div class="flex justify-between items-center"><h4 class="font-bold text-xs">🎉 Meie Väikesed Võidud</h4><button onclick="addWinPrompt()" class="text-indigo-600 text-xs font-bold">+ Lisa</button></div>
+        <div id="winsList" class="space-y-1.5 text-xs"></div>
       </div>
     </section>
 
-    <!-- 5. KODUÕPE & VANUSEPÕHINE ARENG -->
-    <section id="p-school" class="hidden space-y-3">
-      
-      <!-- Vanusepõhine bioloogia / aju areng -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-        <h3 class="font-extrabold text-xs text-slate-900 flex items-center gap-1.5">
-          <span>🧠</span> <span>Vanusepõhine Ajuareng: Mis on bioloogia ja mis Jonn?</span>
-        </h3>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-          <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-xl space-y-1">
-            <strong class="text-indigo-950 font-bold">👦 3-aastane Poiss (Aju areng):</strong>
-            <p class="text-slate-700 leading-relaxed text-[11px]">
-              • <strong>Tung vs Pidur:</strong> Tema pidurduskeskus (prefrontaalne ajukoor) on alles 15% arenenud. Kui ta lööb või jookseb, ei ole see planeeritud õelus – keha reageerib enne mõtet.<br>
-              • <strong>Füüsiline regulatsioon:</strong> Poisid vajavad emotsiooni kehast välja saamiseks füüsilist survet või mürgeldamist, mitte pikka juttu.
-            </p>
+    <!-- 3. SUHE & SALAJANE (TEEMADEGA ÜHINE VESTLUS + PRIVAATNE PIN-IGA RUUM) -->
+    <section id="p-couple" class="hidden space-y-3">
+      <div class="flex bg-slate-200/80 p-1 rounded-2xl gap-1 text-xs font-bold">
+        <button id="subTabShared" onclick="switchCoupleSubTab('shared')" class="flex-1 py-1.5 rounded-xl bg-white text-indigo-700 shadow-xs text-center">👥 Meie Ühine Suhe</button>
+        <button id="subTabPrivate" onclick="switchCoupleSubTab('private')" class="flex-1 py-1.5 rounded-xl text-slate-600 text-center">🔒 <span id="privateTabTitle">Salajane Ruum</span></button>
+      </div>
+
+      <!-- Ühine -->
+      <div id="viewSharedCouple" class="space-y-3">
+        <!-- Kiirvalikud suhtele -->
+        <div class="bg-white p-2.5 rounded-2xl border space-y-1.5">
+          <div class="flex justify-between items-center">
+            <span class="text-[10px] font-bold text-slate-500 uppercase">⚡ Kiirvalikud (avab selle teema vestluse):</span>
+            <button onclick="openM('newCoupleTopicModal')" class="text-[10px] font-bold text-indigo-600">+ Uus teema</button>
           </div>
-          <div class="p-3 bg-purple-50 border border-purple-200 rounded-xl space-y-1">
-            <strong class="text-purple-950 font-bold">👧 7-aastane Tütar (Aju areng):</strong>
-            <p class="text-slate-700 leading-relaxed text-[11px]">
-              • <strong>Häbi & Õiglustunne:</strong> Hakkab arenema tugev enesekriitika. Iga vanema etteheide tekitab sisemist häbi ("ma ei kõlba").<br>
-              • <strong>Vajadus:</strong> Ta vajab emotsionaalset peegeldamist ja autonoomiat ("Sa saad ise valida, millal").
-            </p>
+          <div class="flex gap-1.5 overflow-x-auto scrollbar-none pb-0.5 text-[11px] font-semibold">
+            <button onclick="openOrStartTopic('couple', 'cpl_relax', 'Suhe', 'Õhtune lõõgastus ja harjumused', 'Arutleme rahulikult selle üle, kui ühel partneril on harjumus õhtuti lõõgastuda, aga teist poolt teeb see murelikuks.')" class="bg-amber-100 text-amber-900 px-2.5 py-1 rounded-xl whitespace-nowrap border border-amber-200">🍺 Lõõgastus & harjumused</button>
+            <button onclick="openOrStartTopic('couple', 'cpl_distance', 'Suhe', 'Väsimus ja kaugus suhtes', 'Tundub, et oleme väsimusest korterikaaslased ja lähedust on vähe. Kuidas teineteise poole tagasi tulla?')" class="bg-rose-100 text-rose-900 px-2.5 py-1 rounded-xl whitespace-nowrap border border-rose-200">💔 Kaugus & intiimsus</button>
+            <button onclick="openOrStartTopic('couple', 'cpl_load', 'Suhe', 'Kodused tööd ja vabadus', 'Kuidas jagada kodutöid ja vaimset koormat nii, et kumbki ei tunneks ebaõiglust ega kontrollimist?')" class="bg-indigo-100 text-indigo-900 px-2.5 py-1 rounded-xl whitespace-nowrap border border-indigo-200">⚖️ Kodused tööd & usaldus</button>
           </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div id="coupleTopicList" class="bg-white p-2 rounded-2xl border max-h-[160px] md:max-h-[450px] overflow-y-auto space-y-1.5 shadow-sm"></div>
+          <div class="md:col-span-2 bg-white p-3 rounded-2xl border shadow-sm flex flex-col h-[450px]">
+            <div class="border-b pb-2 flex justify-between items-center">
+              <h4 class="font-bold text-xs text-slate-900 truncate" id="coupleChatTitle">Ühine Suhtevestlus</h4>
+              <button onclick="deleteCoupleTopic()" class="text-slate-400 hover:text-rose-600 text-xs">🗑️</button>
+            </div>
+            <div id="coupleChatBox" class="flex-1 overflow-y-auto py-3 space-y-2.5 text-xs p-1"></div>
+            <form onsubmit="sendCoupleMsg(event)" class="pt-2 border-t flex gap-1.5">
+              <button type="button" onclick="startVoice('coupleChatInput')" class="bg-slate-100 px-2.5 rounded-xl text-sm border">🎙️</button>
+              <input id="coupleChatInput" required placeholder="Jätka arutelu..." class="flex-1 text-xs border bg-slate-50 rounded-xl px-3 py-2 outline-none">
+              <button type="submit" class="bg-indigo-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl">Aruta</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border space-y-2">
+          <div class="flex justify-between items-center"><h4 class="font-bold text-xs">📖 Meie Kokkulepped</h4><button onclick="addAgreementPrompt()" class="text-indigo-600 text-xs font-bold">+ Lisa</button></div>
+          <div id="agreementsList" class="space-y-1.5 text-xs"></div>
         </div>
       </div>
 
-      <!-- Koduõppe metoodika -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-        <div class="flex items-center gap-2">
-          <span class="text-xl">🎒</span>
-          <h3 class="font-extrabold text-xs text-slate-900">Koduõppe Trikid (7a tütar ilma pisarateta)</h3>
-        </div>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-          <div class="p-2.5 bg-slate-50 border rounded-xl">
-            <strong>⏰ 20-minuti reegel:</strong> Pange liivakell või taimer. 20 min õppimist, siis 5 min hüppamist või tantsu. Kell on reegel, mitte vanem.
-          </div>
-          <div class="p-2.5 bg-slate-50 border rounded-xl">
-            <strong>🔍 Detektiivi nipp:</strong> "Tule aita mul kontrollida, kas ma lahendasin selle õigesti." Laps parandab vanema "vigu" 10x suurema innuga.
-          </div>
-          <div class="p-2.5 bg-slate-50 border rounded-xl">
-            <strong>🎨 Sooritushirmu murdmine:</strong> Kui ta nutab "Ma ei oska!", ütle: "Mina kirjutan ühe rea, sina kirjutad teise."
-          </div>
-          <div class="p-2.5 bg-slate-50 border rounded-xl">
-            <strong>🍎 Veresuhkru laadimine:</strong> Ära kunagi alusta õppimist tühja kõhuga. 1 juustupulk või banaan enne vihikute avamist.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 6. ROLLIMÄNGU SIMULAATOR -->
-    <section id="p-roleplay" class="hidden space-y-3">
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-        <div>
-          <h3 class="font-extrabold text-sm text-slate-900 flex items-center gap-1.5">
-            <span>🎭</span> <span>Interaktiivne Rollimängu Simulaator</span>
-          </h3>
-          <p class="text-xs text-slate-500">Harjuta raskeid vestlusi turvalises keskkonnas enne, kui päris elus torm lahti läheb.</p>
+      <!-- Privaatne (PIN-iga kaitstud, ainult omanikule!) -->
+      <div id="viewPrivateCouple" class="hidden space-y-3">
+        <div class="bg-slate-900 text-white p-4 rounded-2xl flex justify-between items-center">
+          <div><h4 class="font-black text-xs text-amber-400" id="privateHeaderName"></h4><p class="text-[10px] text-slate-400">Partner ei näe seda kunagi. Kõik sinu vestlused salvestuvad siia.</p></div>
+          <button onclick="lockProfile()" class="text-[10px] bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700">🔒 Lukusta</button>
         </div>
 
-        <div class="space-y-2 text-xs">
-          <label class="font-bold text-slate-700">Vali olukord harjutamiseks:</label>
-          <select id="roleplayScenario" class="w-full p-2.5 border rounded-xl bg-slate-50 text-xs font-semibold">
-            <option value="3a_shoes">👦 3a poiss keeldub õueriideid panemast ja loobib saapaid</option>
-            <option value="7a_screen">👧 7a tütar keeldub tahvlit ära panemast ("Sa oled ebaõiglane!")</option>
-            <option value="siblings_fight">💥 Lapsed kisuvad mänguasja pärast ja 3a hammustab</option>
-            <option value="couple_tired">💑 Partner on pinges ja hakkab nääkuma</option>
-          </select>
-          <button onclick="startRoleplay()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-xl transition shadow-xs">
-            Alusta rollimängu
-          </button>
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-300 p-4 rounded-2xl space-y-2">
+          <div class="flex justify-between items-center">
+            <h4 class="font-extrabold text-xs text-amber-950">✨ Tänane Salajane Soovitus</h4>
+            <div class="flex gap-1">
+              <button onclick="speakText(document.getElementById('dailyMissionCard').innerText)" class="bg-white border text-[10px] px-2 py-1 rounded-lg font-bold">🔊 Kuula</button>
+              <button onclick="generateDailySecretMission(false)" class="bg-amber-500 text-white font-bold text-[10px] px-2.5 py-1 rounded-xl">🎲 Uus</button>
+            </div>
+          </div>
+          <div id="dailyMissionCard" class="text-xs text-slate-800 space-y-2 bg-white/90 p-3 rounded-xl border border-amber-200 leading-relaxed"></div>
         </div>
 
-        <div id="roleplayBox" class="hidden border rounded-2xl p-3 bg-slate-50 space-y-2">
-          <div class="flex justify-between items-center border-b pb-1">
-            <span class="font-bold text-xs text-indigo-900" id="roleplayTitle">Harjutus</span>
-            <button onclick="closeRoleplay()" class="text-slate-400 hover:text-slate-800 text-xs font-bold">Lõpeta</button>
-          </div>
-          <div id="roleplayChat" class="h-56 overflow-y-auto space-y-2 text-xs p-1"></div>
-          <form onsubmit="sendRoleplayMsg(event)" class="pt-2 border-t flex gap-2">
-            <input id="roleplayInput" required placeholder="Mida sa lapsele/partnerile ütled?..." class="flex-1 text-xs border border-slate-300 bg-white rounded-xl px-3 py-2 outline-none">
-            <button type="submit" class="bg-indigo-600 text-white font-bold px-3 py-2 rounded-xl text-xs">Vasta</button>
+        <div class="bg-white p-3.5 rounded-2xl border space-y-2">
+          <h4 class="font-bold text-xs border-b pb-1.5">Salajane Vestlus (Ainult Sinule)</h4>
+          <div id="privateChatBox" class="h-64 overflow-y-auto space-y-2.5 text-xs p-1"></div>
+          <form onsubmit="sendPrivateMsg(event)" class="pt-2 border-t flex gap-1.5">
+            <button type="button" onclick="startVoice('privateChatInput')" class="bg-slate-100 px-2.5 rounded-xl text-sm border">🎙️</button>
+            <input id="privateChatInput" required placeholder="Küsi salaja nõu..." class="flex-1 text-xs border bg-slate-50 rounded-xl px-3 py-2 outline-none">
+            <button type="submit" class="bg-slate-900 text-white text-xs font-bold px-3.5 py-2 rounded-xl">Küsi</button>
           </form>
         </div>
       </div>
     </section>
 
-    <!-- 7. SAMMUD (SPINNEREID) -->
-    <section id="p-plans" class="hidden space-y-3">
-      <div class="flex justify-between items-center no-print">
-        <div>
-          <h2 class="text-sm font-bold text-slate-900">Sammud (Kriisispikrid)</h2>
-          <p class="text-[11px] text-slate-500">Lühikesed kontrollpunktid otse kriisihetkeks.</p>
-        </div>
-        <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-sm flex items-center gap-1">
-          🖨️ Prindi / PDF
-        </button>
+    <!-- 4. 20 NÄDALA EKSPERIMENDID -->
+    <section id="p-weeks" class="hidden space-y-3">
+      <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-1">
+        <h2 class="font-extrabold text-sm text-slate-900">🏆 20-Nädalane Suhte & Rahu Arengutee</h2>
+        <p class="text-xs text-slate-600">20 järkjärgulist 7-päevast sammu: närvisüsteemist ja austusest kuni meeskonnatöö ja läheduseni.</p>
       </div>
-      <div id="plansList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      <div id="weeksGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
     </section>
 
-    <!-- 8. NIPID & ALATEADVUS -->
-    <section id="p-tools" class="hidden space-y-3">
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-xs">
-        <h3 class="font-extrabold text-xs text-slate-900 flex items-center gap-1.5">
-          <span>🧠</span> <span>Alateadvuse ja psühholoogia salanipid:</span>
-        </h3>
-
-        <div class="space-y-2">
-          <div class="p-3 bg-slate-50 border rounded-xl space-y-1">
-            <strong class="text-indigo-900 font-bold">1. Käest hoidmise ja süvasurve maagia:</strong>
-            <p class="text-slate-700 leading-relaxed text-[11px]">
-              Ära räägi lapsele üle toa. Võta vaikides tema käest kinni või pane soe käsi õlale. Nahasurve langetab pulssi sekunditega enne, kui ükski sõna kohale jõuab.
-            </p>
-          </div>
-
-          <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-xl space-y-1">
-            <strong class="text-amber-950 font-bold">2. Kui 3a fikseerub ("Tahan piima NÜÜD!"):</strong>
-            <p class="text-slate-700 leading-relaxed text-[11px]">
-              Ütle <em>"JAH!"</em> aga lisa tegevus: <em>"Jah, joome piima! Aita mul kruus lauale viia. Kas võtame sinise või punase kruusi?"</em> Valik murrab jonnifookuse.
-            </p>
-          </div>
-
-          <div class="p-3 bg-emerald-50/70 border border-emerald-200 rounded-xl space-y-1">
-            <strong class="text-emerald-950 font-bold">3. Snäki venitamine enne õhtusööki:</strong>
-            <p class="text-slate-700 leading-relaxed text-[11px]">
-              "Koka salajane maitsmine": Anna neile kurgiviil või porganditükk ja ütle: <em>"Mul on vaja profi-maitsjat! Hinda ära, kas see on piisavalt krõmps prae kõrvale!"</em>
-            </p>
-          </div>
-
-          <div class="p-3 bg-purple-50/70 border border-purple-200 rounded-xl space-y-1">
-            <strong class="text-purple-950 font-bold">4. Kui 7a kurdab: "Mul on niiii igav":</strong>
-            <p class="text-slate-700 leading-relaxed text-[11px]">
-              Ära paku meelelahutust. Ütle: <em>"Igavus on tegelikult lahe. See tähendab, et su aju valmistub mingiks uueks geniaalseks ideeks. Ma ootan huviga, mis see on!"</em>
-            </p>
-          </div>
+    <!-- 5. NORA KODUÕPE (ZODIAC + HD + PSÜHHOLOOGIA + TAIMER) -->
+    <section id="p-school" class="hidden space-y-3">
+      <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 rounded-3xl shadow-md flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div>
+          <h3 class="font-extrabold text-sm">⏱️ Nora Õppimise Neutraalne Kell</h3>
+          <p class="text-[11px] text-indigo-100">Kell on reegel, mitte ema/isa. 20 min järel on 5 min liikumispaus!</p>
+        </div>
+        <div class="flex items-center gap-2 bg-white/15 px-3 py-2 rounded-2xl">
+          <span id="timerDisplay" class="text-2xl font-mono font-black">20:00</span>
+          <button onclick="toggleStudyTimer()" id="timerBtn" class="bg-white text-indigo-700 font-bold text-xs px-3 py-1.5 rounded-xl">Start</button>
+          <button onclick="resetStudyTimer()" class="text-white/80 font-bold text-xs px-1">↺</button>
         </div>
       </div>
+
+      <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-2">
+        <h3 class="font-extrabold text-xs text-slate-900">🎒 Nora (7a) Täppishäälestatud Koduõppe Süsteem:</h3>
+        <div id="noraSchoolGuide" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs"></div>
+      </div>
+
+      <div class="bg-white p-3.5 rounded-2xl border space-y-2">
+        <h4 class="font-bold text-xs">💬 Küsi Nora õppimise kohta</h4>
+        <div id="schoolChatBox" class="h-44 overflow-y-auto space-y-2 text-xs p-1"></div>
+        <form onsubmit="sendSchoolMsg(event)" class="pt-2 border-t flex gap-1.5">
+          <input id="schoolChatInput" required placeholder="Küsi nõu..." class="flex-1 text-xs border bg-slate-50 rounded-xl px-3 py-2 outline-none">
+          <button type="submit" class="bg-indigo-600 text-white font-bold px-3.5 py-2 rounded-xl text-xs">Küsi</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 6. MEIE PROFIILID (ZODIAC + HIINA + TÄPNE HUMAN DESIGN + MUUDETAV) -->
+    <section id="p-profiles" class="hidden space-y-3">
+      <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-1">
+        <h2 class="font-extrabold text-sm text-slate-900">🧬 Meie Pere Täpsed Profiilid</h2>
+        <p class="text-xs text-slate-600">Siia on kokku kogutud teie sünniandmed, loomupärased energiakeskused ja tundlikkused – hea aeg-ajalt meeldetuletuseks lugeda. Iga inimese andmeid saab siin muuta ja AI uuendab profiili automaatselt.</p>
+      </div>
+      <div id="familyProfilesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+    </section>
+
+    <!-- 7. PÄEVIK -->
+    <section id="p-tracker" class="hidden space-y-3">
+      <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
+        <div class="flex justify-between items-center">
+          <div><h3 class="font-extrabold text-sm">📊 Käitumise & Päästikute Päevik</h3><p class="text-[11px] text-slate-500">Märgi 3 sekundiga – äpp leiab korduvad põhjused.</p></div>
+          <button onclick="openM('logTrackerModal')" class="bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl">+ Märgi</button>
+        </div>
+        <div class="p-3 bg-indigo-50/70 border border-indigo-200 rounded-xl text-xs"><strong class="text-indigo-950">🔍 Mustrid:</strong> <p id="patternText" class="text-slate-700 mt-0.5">Märkmeid kogutakse.</p></div>
+        <div id="trackerLogsList" class="space-y-1.5 text-xs max-h-64 overflow-y-auto"></div>
+      </div>
+    </section>
+
+    <!-- 8. ROLLIMÄNG -->
+    <section id="p-roleplay" class="hidden space-y-3">
+      <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
+        <h3 class="font-extrabold text-sm">🎭 Interaktiivne Rollimängu Simulaator</h3>
+        <select id="roleplayScenario" class="w-full p-2.5 border rounded-xl bg-slate-50 text-xs font-semibold">
+          <option value="roma_milk">👦 Roma (3a, Projektor): Fikseerunud soov enne sööki</option>
+          <option value="nora_homework">👧 Nora (7a, Generaator): Nutt ja sooritushirm</option>
+          <option value="siblings_fight">💥 Laste füüsiline tüli</option>
+          <option value="couple_evening">💑 Partneri väsimus ja õhtune pinge</option>
+        </select>
+        <button onclick="startRoleplay()" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs">Alusta rollimängu</button>
+        <div id="roleplayBox" class="hidden border rounded-2xl p-3 bg-slate-50 space-y-2">
+          <div class="flex justify-between items-center border-b pb-1"><span class="font-bold text-xs text-indigo-900" id="roleplayTitle"></span><button onclick="closeRoleplay()" class="text-xs font-bold text-slate-400">Lõpeta</button></div>
+          <div id="roleplayChat" class="h-56 overflow-y-auto space-y-2 text-xs p-1"></div>
+          <form onsubmit="sendRoleplayMsg(event)" class="pt-2 border-t flex gap-2"><input id="roleplayInput" required placeholder="Mida sa vastad?..." class="flex-1 text-xs border bg-white rounded-xl px-3 py-2 outline-none"><button type="submit" class="bg-indigo-600 text-white font-bold px-3 py-2 rounded-xl text-xs">Vasta</button></form>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. SAMMUD -->
+    <section id="p-plans" class="hidden space-y-3">
+      <div class="flex justify-between items-center no-print"><h2 class="text-sm font-bold">📋 Sammud (Kriisispikrid)</h2><button onclick="window.print()" class="bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-xl">🖨️ Prindi</button></div>
+      <div id="plansList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
     </section>
   </main>
 
-  <!-- PIN-KOODI LUKUSTUSE MODAAL -->
-  <div id="pinModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-xs w-full p-6 border text-center space-y-4 shadow-2xl">
-      <div class="space-y-1">
-        <span class="text-3xl" id="pinIcon">🔒</span>
-        <h3 class="font-black text-sm text-slate-900" id="pinTargetName">Profiili lukustus</h3>
-        <p class="text-[11px] text-slate-500">Sisesta oma 4-kohaline PIN-kood.</p>
-      </div>
+  <!-- MODAALID -->
+  <div id="pinModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4"><div class="bg-white rounded-3xl max-w-xs w-full p-6 border text-center space-y-4 shadow-2xl"><div><span class="text-3xl" id="pinIcon">🔒</span><h3 class="font-black text-sm" id="pinTargetName"></h3><p class="text-[11px] text-slate-500">Sisesta 4-kohaline PIN (jätab selles telefonis meelde).</p></div><input type="password" maxlength="4" id="pinInput" class="w-36 text-center text-2xl tracking-widest font-mono p-2 border-2 rounded-2xl mx-auto outline-none"><div id="pinError" class="text-rose-600 text-[11px] font-bold hidden">Vale PIN!</div><div class="flex gap-2"><button onclick="closeM('pinModal')" class="flex-1 bg-slate-100 font-bold py-2 rounded-xl text-xs">Loobu</button><button onclick="verifyPin()" class="flex-1 bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs">Kinnita</button></div><p class="text-[10px] text-slate-400">Vaikimisi: Veikko 1111 / Katre 2222</p></div></div>
+  <div id="sosModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4"><div class="bg-white rounded-3xl max-w-sm w-full p-5 border-4 border-rose-500 space-y-3.5 shadow-2xl max-h-[90vh] overflow-y-auto"><div class="flex justify-between items-center"><h3 class="font-black text-rose-600 text-sm">🚨 SOS PROTOKOLL</h3><button onclick="closeM('sosModal')" class="text-xl font-bold text-slate-400">&times;</button></div><div class="bg-rose-50 border border-rose-200 p-3 rounded-2xl text-center space-y-2"><p class="text-[11px] font-bold text-rose-950 uppercase">Samm 1: Rahune esmalt ise (30 sek)</p><div class="w-16 h-16 mx-auto rounded-full bg-rose-400 text-white flex items-center justify-center text-[10px] font-extrabold animate-breathe shadow-md">Hinga</div><p class="text-[10px] text-slate-600 italic">"Meie peres on kõigil tundlik tunnetus – minu rahu on kõigi ankur."</p></div><div class="text-xs space-y-2"><div class="p-2.5 bg-slate-50 border rounded-xl"><strong>1. Asjade loopimine:</strong> Võta asi rahuliku käega ära. Hoia õrnalt käsi: <em class="text-rose-900 block mt-1">"Ma ei luba visata. Ma hoian sind turvaliselt."</em></div><div class="p-2.5 bg-slate-50 border rounded-xl"><strong>2. Karjumine / põrandal:</strong> Istu 1m kaugusele maha. Ära seleta loogikat: <em class="text-indigo-900 block mt-1">"Ma olen siin su juures. Ma ei lähe ära."</em></div></div><button onclick="closeM('sosModal')" class="w-full bg-slate-900 text-white font-bold py-2.5 rounded-xl text-xs">Sain hingamise alla</button></div></div>
 
-      <input type="password" maxlength="4" id="pinInput" class="w-36 text-center text-2xl tracking-widest font-mono p-2 border-2 rounded-2xl mx-auto focus:border-indigo-600 outline-none">
-
-      <div id="pinError" class="text-rose-600 text-[11px] font-bold hidden">Vale PIN! Proovi uuesti.</div>
-
-      <div class="flex gap-2">
-        <button onclick="closeM('pinModal')" class="flex-1 bg-slate-100 text-slate-700 font-bold py-2 rounded-xl text-xs">Loobu</button>
-        <button onclick="verifyPin()" class="flex-1 bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs">Kinnita</button>
-      </div>
-      <p class="text-[10px] text-slate-400">Vaikimisi kood: Veikko 1111 / Katre 2222</p>
+  <!-- PROFIILI MUUTMISE MODAAL -->
+  <div id="editProfileModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 border space-y-3 shadow-xl text-xs">
+      <div class="flex justify-between items-center"><h3 class="font-bold text-sm" id="editProfTitle">Muuda andmeid</h3><button onclick="closeM('editProfileModal')" class="text-lg font-bold text-slate-400">&times;</button></div>
+      <input type="hidden" id="editProfKey">
+      <div><label class="font-bold">Sünnikuupäev (AAAA-KK-PP):</label><input type="date" id="epDate" class="w-full p-2 border rounded-xl mt-1"></div>
+      <div class="grid grid-cols-2 gap-2"><div><label class="font-bold">Kellaaeg:</label><input type="time" id="epTime" class="w-full p-2 border rounded-xl mt-1"></div><div><label class="font-bold">Sünnikoht:</label><input type="text" id="epPlace" class="w-full p-2 border rounded-xl mt-1"></div></div>
+      <div><label class="font-bold">Human Design Tüüp:</label><select id="epHdType" class="w-full p-2 border rounded-xl mt-1 bg-slate-50"><option value="Generator">Generator</option><option value="Manifesting Generator">Manifesting Generator</option><option value="Manifestor">Manifestor</option><option value="Projector">Projector</option><option value="Reflector">Reflector</option></select></div>
+      <button onclick="saveEditedProfile(false)" class="w-full bg-slate-200 text-slate-800 font-bold py-2 rounded-xl">Salvesta andmed</button>
+      <button onclick="saveEditedProfile(true)" class="w-full bg-indigo-600 text-white font-bold py-2.5 rounded-xl shadow-sm">✨ Salvesta & Uuenda profiil AI abil</button>
     </div>
   </div>
 
-  <!-- SOS MODAAL KOOS 30s HINGAMISEGA -->
-  <div id="sosModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-sm w-full p-5 border-4 border-rose-500 space-y-3.5 shadow-2xl max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center">
-        <h3 class="font-black text-rose-600 text-sm flex items-center gap-1.5">🚨 SOS KRIISI PROTOKOLL</h3>
-        <button onclick="closeM('sosModal')" class="text-slate-400 hover:text-slate-800 font-bold text-xl">&times;</button>
-      </div>
-
-      <!-- 30-sekundiline hingamisjuhend -->
-      <div class="bg-rose-50 border border-rose-200 p-3 rounded-2xl text-center space-y-2">
-        <p class="text-[11px] font-bold text-rose-950 uppercase tracking-wider">Samm 1: Rahune esmalt ise (30 sek)</p>
-        <div class="w-16 h-16 mx-auto rounded-full bg-rose-400 text-white flex items-center justify-center text-[10px] font-extrabold animate-breathe shadow-md">
-          Hinga
-        </div>
-        <p class="text-[10px] text-slate-600 italic">"Laps ei saa enne rahuneda, kui minu pulss on all."</p>
-      </div>
-
-      <!-- Samm 2: Reaalne füüsiline käitumine -->
-      <div class="text-xs space-y-2">
-        <p class="font-bold text-slate-900 text-[11px]">Samm 2: Tegutse vastavalt olukorrale:</p>
-
-        <div class="p-2.5 bg-slate-50 border rounded-xl space-y-0.5">
-          <strong class="text-slate-900 font-bold">1. Kui laps loobib asju:</strong>
-          <p class="text-slate-600 text-[11px]">Astu ette, võta lendav asi rahuliku käega ära. Pane käed õrnalt lapse kätele:</p>
-          <div class="italic text-rose-900 font-semibold mt-1">"Ma ei luba visata. Ma hoian su käsi kinni, et meil oleks turvaline."</div>
-        </div>
-
-        <div class="p-2.5 bg-slate-50 border rounded-xl space-y-0.5">
-          <strong class="text-slate-900 font-bold">2. Kui peksab põrandat ja karjub:</strong>
-          <p class="text-slate-600 text-[11px]">Istu 1m kaugusele põrandale. Ära seleta midagi:</p>
-          <div class="italic text-indigo-900 font-semibold mt-1">"Ma olen siin su juures. Ma ei lähe ära."</div>
-        </div>
-
-        <div class="p-2.5 bg-slate-50 border rounded-xl space-y-0.5">
-          <strong class="text-slate-900 font-bold">3. Kui vend on ohus:</strong>
-          <p class="text-slate-600 text-[11px]">Tõsta väiksem kohe teise tuppa turvalisse kohta ja tule tagasi suurema juurde.</p>
-        </div>
-      </div>
-
-      <button onclick="closeM('sosModal')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition">
-        Sain hingamise alla, tegutsen rahulikult
-      </button>
-    </div>
-  </div>
-
-  <!-- PÄEVIKU MÄRKIMISE MODAAL -->
-  <div id="logTrackerModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-sm w-full p-5 border space-y-3 shadow-xl text-xs">
-      <div class="flex justify-between items-center">
-        <h3 class="font-bold text-slate-900">Märgi käitumine & päästik</h3>
-        <button onclick="closeM('logTrackerModal')" class="text-slate-400 font-bold text-lg">&times;</button>
-      </div>
-      
-      <div class="space-y-1">
-        <label class="font-semibold text-slate-700">Laps:</label>
-        <select id="trChild" class="w-full p-2 border rounded-xl bg-slate-50">
-          <option value="3a poiss">3a poiss</option>
-          <option value="7a tütar">7a tütar</option>
-          <option value="Mõlemad koos">Mõlemad koos</option>
-        </select>
-      </div>
-
-      <div class="space-y-1">
-        <label class="font-semibold text-slate-700">Käitumine / Emotsioon:</label>
-        <select id="trBehavior" class="w-full p-2 border rounded-xl bg-slate-50">
-          <option value="Löömine / Vägivald">Löömine / Vägivald</option>
-          <option value="Hüsteeriline jonn / Karjumine">Hüsteeriline jonn / Karjumine</option>
-          <option value="Asjade loopimine">Asjade loopimine</option>
-          <option value="Magamamineku protest">Magamamineku protest</option>
-          <option value="Nutt ja solvumine">Nutt ja solvumine</option>
-        </select>
-      </div>
-
-      <div class="space-y-1">
-        <label class="font-semibold text-slate-700">Tõenäoline peidetud päästik:</label>
-        <select id="trTrigger" class="w-full p-2 border rounded-xl bg-slate-50">
-          <option value="Nälg / Veresuhkru langus">Nälg / Veresuhkru langus</option>
-          <option value="Väsimus / Pikk päev">Väsimus / Pikk päev</option>
-          <option value="Ekraani sulgemine">Ekraani sulgemine</option>
-          <option value="Üleminek (mängult sööma/õue)">Üleminek (mängult sööma/õue)</option>
-          <option value="Tähelepanuvajadus / Armukadedus">Tähelepanuvajadus / Armukadedus</option>
-        </select>
-      </div>
-
-      <button onclick="saveTrackerLog()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl transition shadow-xs mt-2">
-        Salvesta päevikusse
-      </button>
-    </div>
-  </div>
-
-  <!-- 10 KÄSU MUUTMISE MODAAL -->
+  <!-- REEGLITE JÄRJESTAMISE JA MUUTMISE MODAAL -->
   <div id="editRulesModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-5 border space-y-3 shadow-xl text-xs max-h-[85vh] overflow-y-auto">
-      <div class="flex justify-between items-center">
-        <h3 class="font-bold text-slate-900 text-sm">📜 Meie 10 Kuldreeglit (Muutmine)</h3>
-        <button onclick="closeM('editRulesModal')" class="text-slate-400 font-bold text-lg">&times;</button>
-      </div>
-      <p class="text-[11px] text-slate-500">Need on põhimõtted, mida mõlemad vanemad iga päev järgivad.</p>
-      
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 border space-y-3 text-xs max-h-[85vh] overflow-y-auto">
+      <div class="flex justify-between items-center"><h3 class="font-bold text-sm">📜 Kuldreeglite Järjekord (1–10 on esilehel)</h3><button onclick="closeM('editRulesModal')" class="text-lg font-bold">&times;</button></div>
       <div id="editRulesList" class="space-y-1.5"></div>
-      
-      <button onclick="addNewRulePrompt()" class="w-full py-1.5 border border-dashed border-indigo-400 text-indigo-700 font-bold rounded-xl text-xs">+ Lisa reegel</button>
-
+      <button onclick="addNewRulePrompt()" class="w-full py-1.5 border border-dashed border-indigo-400 text-indigo-700 font-bold rounded-xl">+ Lisa uus reegel</button>
       <button onclick="closeM('editRulesModal')" class="w-full bg-slate-900 text-white font-bold py-2 rounded-xl">Valmis</button>
     </div>
   </div>
 
-  <!-- TÄNUPURGI MODAAL -->
-  <div id="gratitudeModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-sm w-full p-5 border border-slate-200 space-y-3 shadow-xl text-xs">
-      <div class="flex justify-between items-center">
-        <h3 class="font-bold text-slate-900 text-sm">💛 Saada partnerile soe märkamine</h3>
-        <button onclick="closeM('gratitudeModal')" class="text-slate-400 text-lg font-bold">&times;</button>
-      </div>
-      <textarea id="gratitudeInput" rows="3" placeholder="Aitäh, et sa täna..." class="w-full p-2.5 border rounded-xl bg-slate-50 text-xs outline-none focus:ring-2 focus:ring-amber-400"></textarea>
-      <button onclick="sendGratitude()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded-xl transition shadow-xs">
-        Saada armastusega
-      </button>
-    </div>
-  </div>
-
-  <!-- UUE JUHTUMI MODAAL -->
-  <div id="newIncidentModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-5 border border-slate-200 space-y-3 shadow-xl">
-      <div class="flex justify-between items-center">
-        <h3 class="font-bold text-xs text-slate-800">Lisa uus olukord lastega</h3>
-        <button onclick="closeM('newIncidentModal')" class="text-slate-400 text-lg font-bold">&times;</button>
-      </div>
-      <form onsubmit="addIncident(event)" class="space-y-2.5">
-        <input id="inTitle" required placeholder="Pealkiri (nt 3a poiss peksab patju ja hammustab)" class="w-full text-xs p-2.5 border rounded-xl bg-slate-50 focus:bg-white outline-none focus:ring-2 focus:ring-indigo-500">
-        <select id="inChild" class="w-full text-xs p-2.5 border rounded-xl bg-slate-50 focus:bg-white outline-none">
-          <option value="3a poiss">3-aastane poiss</option>
-          <option value="7a tütar">7-aastane tütar</option>
-          <option value="3a poiss & Vend">3-aastane poiss & Vend</option>
-          <option value="Mõlemad lapsed">Mõlemad lapsed koos</option>
-        </select>
-        <textarea id="inMsg" rows="3" required placeholder="Mis täpselt juhtus? Kirjelda olukorda..." class="w-full text-xs p-2.5 border rounded-xl bg-slate-50 focus:bg-white outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-sm transition active:scale-95">
-          Salvesta ja alusta arutelu
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- SÜNKROONI MODAAL -->
-  <div id="syncModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-5 border border-slate-200 space-y-3 shadow-xl text-xs">
-      <div class="flex justify-between items-center">
-        <h3 class="font-bold text-slate-900 text-sm">☁️ Kahe telefoni pilvesünkroon</h3>
-        <button onclick="closeM('syncModal')" class="text-slate-400 text-lg font-bold">&times;</button>
-      </div>
-      <textarea id="firebaseConfigInput" rows="4" placeholder='firebaseConfig = { apiKey: "...", projectId: "..." };' class="w-full text-[11px] font-mono p-2.5 border rounded-xl bg-slate-50"></textarea>
-      <div class="flex gap-2">
-        <button onclick="saveFirebaseConfig()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-xl transition">Ühenda pilv</button>
-        <button onclick="exportData()" class="px-3 bg-slate-100 hover:bg-slate-200 font-bold rounded-xl border">Varukoopia</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- AI API MODAAL -->
-  <div id="aiModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-5 border border-slate-200 space-y-3 shadow-xl text-xs">
-      <div class="flex justify-between items-center">
-        <h3 class="font-bold text-slate-900 text-sm">🤖 AI Nõustaja API Seadistus</h3>
-        <button onclick="closeM('aiModal')" class="text-slate-400 text-lg font-bold">&times;</button>
-      </div>
-      <input type="password" id="aiApiKeyInput" placeholder="sk-proj-..." class="w-full text-xs p-2.5 border rounded-xl bg-slate-50 font-mono outline-none">
-      <div id="aiStatusMsg" class="hidden p-2 rounded-xl text-[11px] font-semibold"></div>
-      <div class="flex gap-2 pt-2">
-        <button onclick="saveAndTestAI()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-xl transition">Salvesta</button>
-        <button onclick="clearAIKey()" class="px-3 bg-slate-100 font-bold rounded-xl border">Eemalda</button>
-      </div>
-    </div>
-  </div>
+  <div id="archiveModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4"><div class="bg-white rounded-3xl max-w-md w-full p-5 border space-y-3 text-xs max-h-[80vh] overflow-y-auto"><div class="flex justify-between"><h3 class="font-bold">📦 Arhiveeritud Reeglid</h3><button onclick="closeM('archiveModal')">&times;</button></div><div id="archiveList" class="space-y-1.5"></div></div></div>
+  <div id="settingsModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4"><div class="bg-white rounded-3xl max-w-md w-full p-5 border space-y-3 text-xs"><div class="flex justify-between"><h3 class="font-bold text-sm">⚙️ Seaded & AI Võti</h3><button onclick="closeM('settingsModal')">&times;</button></div><div class="p-3 bg-indigo-50 border border-indigo-200 rounded-2xl space-y-2"><label class="font-bold">🤖 Google AI Studio Võti (sünkroonib mõlema telefoni vahel):</label><input type="password" id="aiApiKeyInput" placeholder="AIzaSy..." class="w-full p-2 border rounded-xl bg-white font-mono"><div id="aiStatusMsg" class="hidden p-1.5 rounded-lg font-semibold"></div><div class="flex gap-2"><button onclick="saveAndTestAI()" class="flex-1 bg-indigo-600 text-white font-bold py-1.5 rounded-xl">Salvesta ja jaga perega</button><button onclick="clearAIKey()" class="px-3 bg-white border font-bold rounded-xl">Eemalda</button></div></div><button onclick="exportData()" class="w-full py-2 bg-slate-100 font-bold rounded-xl border">💾 Varukoopia (JSON)</button></div></div>
+  <div id="logTrackerModal" class="fixed inset-0 bg-slate-900/40 z-50 hidden flex items-center justify-center p-4"><div class="bg-white rounded-3xl max-w-sm w-full p-5 border space-y-3 text-xs"><div class="flex justify-between"><h3 class="font-bold">Märgi päevikusse</h3><button onclick="closeM('logTrackerModal')">&times;</button></div><select id="trChild" class="w-full p-2 border rounded-xl"><option>Roma (3a)</option><option>Nora (7a)</option><option>Mõlemad</option></select><select id="trBehavior" class="w-full p-2 border rounded-xl"><option>Löömine</option><option>Hüsteeriline jonn</option><option>Loopimine</option><option>Solvumine / nutt</option></select><select id="trTrigger" class="w-full p-2 border rounded-xl"><option>Nälg / Veresuhkur</option><option>Väsimus</option><option>Ekraani sulgemine</option><option>Üleminek</option><option>Tähelepanuvajadus</option></select><button onclick="saveTrackerLog()" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-xl">Salvesta</button></div></div>
+  <div id="gratitudeModal" class="fixed inset-0 bg-slate-900/40 z-50 hidden flex items-center justify-center p-4"><div class="bg-white rounded-3xl max-w-sm w-full p-5 border space-y-3 text-xs"><div class="flex justify-between"><h3 class="font-bold">💛 Saada tänu</h3><button onclick="closeM('gratitudeModal')">&times;</button></div><textarea id="gratitudeInput" rows="3" placeholder="Aitäh, et sa..." class="w-full p-2.5 border rounded-xl"></textarea><button onclick="sendGratitude()" class="w-full bg-amber-500 text-white font-bold py-2 rounded-xl">Saada</button></div></div>
+  <div id="newIncidentModal" class="fixed inset-0 bg-slate-900/40 z-50 hidden flex items-center justify-center p-4"><div class="bg-white rounded-3xl max-w-md w-full p-5 border space-y-3"><div class="flex justify-between"><h3 class="font-bold text-xs">Lisa uus olukord</h3><button onclick="closeM('newIncidentModal')">&times;</button></div><form onsubmit="addIncident(event)" class="space-y-2.5"><input id="inTitle" required placeholder="Pealkiri..." class="w-full text-xs p-2.5 border rounded-xl"><select id="inChild" class="w-full text-xs p-2.5 border rounded-xl"><option>Roma (3a)</option><option>Nora (7a)</option><option>Nora & Roma koos</option></select><textarea id="inMsg" rows="3" required placeholder="Mis täpselt juhtus?" class="w-full text-xs p-2.5 border rounded-xl"></textarea><button type="submit" class="w-full bg-indigo-600 text-white font-bold py-2.5 rounded-xl text-xs">Salvesta</button></form></div></div>
+  <div id="newCoupleTopicModal" class="fixed inset-0 bg-slate-900/40 z-50 hidden flex items-center justify-center p-4"><div class="bg-white rounded-3xl max-w-md w-full p-5 border space-y-3"><div class="flex justify-between"><h3 class="font-bold text-xs">Uus suhte teema</h3><button onclick="closeM('newCoupleTopicModal')">&times;</button></div><form onsubmit="addCoupleTopic(event)" class="space-y-2.5"><input id="ctTitle" required placeholder="Teema pealkiri..." class="w-full text-xs p-2.5 border rounded-xl"><textarea id="ctMsg" rows="3" required placeholder="Mida soovid arutada?" class="w-full text-xs p-2.5 border rounded-xl"></textarea><button type="submit" class="w-full bg-indigo-600 text-white font-bold py-2.5 rounded-xl text-xs">Alusta arutelu</button></form></div></div>
 
   <script>
-    // --- 1. PERE 10 KULDREEGLIT (HOMMIKUNE ANKUR) ---
-    const defaultCommandments = [
-      "1. 🛑 Löömine: Mine alati esmalt kannatanu juurde, lohuta teda. Ära anna lööjale esmast emotsioonitähelepanu.",
-      "2. 🤝 Füüsiline kontakt: Ära karju üle toa – mine lapse juurde, lasku silmade kõrgusele, võta käest kinni.",
-      "3. 🌊 Reguleeri enne arutamist: Vihahoos lapsega ei räägita loogikast. Oota 5–10 min, kuni hingamine rahuneb.",
-      "4. 🚫 Ei tühjadele vabandustele: Sunnitud 'ütle vabandust' tekitab trotsi ja silmakirjalikkust. Taasta suhe hiljem.",
-      "5. 🎯 Valiku illusioon: Kangekaelse lapse puhul anna 2 lubatud valikut ('Kas jood sinisest või punasest tassist?').",
-      "6. ⏸️ Pausi reegel paarisuhtes: Kui üks vanem ütleb 'PAUS', astub teine vahele ja laseb esimesel lahkuda.",
-      "7. 🛡️ Ühtne rinne: Teise vanema piiri ega keeldu ei tühistata mitte kunagi laste ees.",
-      "8. 👂 Lähedus enne keeldu: Peegelda esmalt lapse soovi ('Sa tahtsid veel mängida, ma tean') ja alles siis pane piir.",
-      "9. 🔍 Juurpõhjus: Enne vihastamist kontrolli: kas lapsel on kõht tühi, uni peal või sensoorne ülekoormus?",
-      "10. 💛 Vabandamine: Kui vanemal sõitis katus, vabandame alati lapse ees ('Mul on kahju, et ma häält tõstsin')."
+    const BUILTIN_FIREBASE_CONFIG = {
+      apiKey: "AIzaSyAXPjZ14LAHDTFsgH7moS-O9ri0Kv04y08",
+      authDomain: "our-watchlist-cb8d3.firebaseapp.com",
+      projectId: "our-watchlist-cb8d3",
+      storageBucket: "our-watchlist-cb8d3.firebasestorage.app",
+      messagingSenderId: "235209590075",
+      appId: "1:235209590075:web:a916e80cd889512f05e31e"
+    };
+    const CLIENT_ID = 'dev_' + Math.random().toString(36).slice(2, 9);
+
+    // --- TÄPSED PERE PROFIILID (VERIFITSEERITUD PDF JOONISTELT!) ---
+    const defaultFamilyProfiles = {
+      Katre: {
+        name: "Katre (Ema)", icon: "👩", date: "1981-09-19", time: "17:30", place: "Tartu, Eesti",
+        zodiac: "Neitsi Päike • Kaksikud Kuu • Kaalud Merkuur • Skorpion Veenus • Lõvi Marss",
+        chinese: "Metall-Kukk (1981)", hdType: "Manifestor",
+        hdDesc: "5/1 Splenic Manifestor (Single Def, Closed Taste, Shores, Feeling). Algataja, kellel on vaja enne tegutsemist teisi informeerida ja kes ei talu kontrollimist. Avatud Sakraal: töötab võimsate spurtidena ja vajab enne läbipõlemist puhkust! Avatud Emotsionaalkeskus.",
+        summary: "Detailitundlik, aus ja õiglustundega. Vajab korrastatud keskkonda, lubaduste pidamist ja seda, et teine pool informeeriks teda muudatustest ette. Stressis võib muutuda teravaks või vihaseks (kui teda takistatakse). Teda sulatab kui võetakse vastutus lõpuni enda kanda ja kuulatakse ilma parandamiseta."
+      },
+      Veikko: {
+        name: "Veikko (Isa)", icon: "🧔", date: "1984-10-27", time: "19:00", place: "Tartu, Eesti",
+        zodiac: "Skorpion Päike • Ambur Kuu & Veenus • Kaljukits Marss",
+        chinese: "Puit-Rott (1984)", hdType: "Manifesting Generator",
+        hdDesc: "3/5 Sacral Manifesting Generator (Single Def, High Sound, Valleys, Taste). Pidev elujõud ja kiire tegutsemine; õpib läbi katse-eksituse (3-liin) ja tunneb sisemist ootust olla kangelane/lahendaja (5-liin). Reageerib selgetele Jah/Ei valikutele. Avatud Emotsionaalkeskus.",
+        summary: "Sügav ja strateegiline, aga vajab kergust, huumorit, autonoomiat ja austust oma katsetuste vastu. Tõmbub eemale kui tunneb, et teda laste ees parandatakse. Teda avab siiras usaldus, 15 min rahulik maandumine pärast tööd ja selge loogiline pilt ilma süüdistamiseta."
+      },
+      Nora: {
+        name: "Nora (7a Tütar)", icon: "👧", date: "2019-07-16", time: "15:46", place: "Belmar, NJ",
+        zodiac: "Vähk Päike & Veenus • Kaljukits Kuu (Varjutus) • Lõvi Merkuur & Marss",
+        chinese: "Maa-Siga (2019)", hdType: "Generator",
+        hdDesc: "4/6 Sacral Generator (Split Def, Nervous Touch, Markets, Inner Vision). Õpib parimalt siis, kui saab reageerida A/B valikutele, tal on õppides kerge puudutus/liigutus (pleed, snäkk, mitte steriilne vaikus!) ning piisavalt aega asja vaimusilmas nägemiseks. Avatud Emotsionaalkeskus.",
+        summary: "Ülimalt tundlik pere pingete suhtes (imab vanemate meeleolu endasse), pika mäluga, aga tugeva uhkuse ja sooritushirmuga. Vajab hubast turvatunnet, väärikuse päästmist vigade korral ja detektiivimänge."
+      },
+      Roma: {
+        name: "Roma (3a Poiss)", icon: "👦", date: "2023-04-06", time: "11:53", place: "Toms River, NJ",
+        zodiac: "Jäär Päike • Kaalud Kuu • Sõnn Veenus/Merkuur",
+        chinese: "Vesi-Jänes (2023)", hdType: "Projector",
+        hdDesc: "2/4 Splenic Projector (Split Def, High Sound, Markets, Smell). AVATUD SAKRAAL: tal ei ole oma püsivat mootorit – ta laenab Nora ja Veikko energiat, läheb hoogu ja siis äkitselt väsib! Teda ei tohi kamandada – ta reageerib soojale kutsumisele ja tunnustusele. Rahuneb läbi muusika, mänguliste häälte ja omaette olemise aja.",
+        summary: "Sündinud jälgija ja kiire taiplikkusega, aga kui teda sunnitakse või tema peale karjutakse, muutub kibestunuks/tõrksaks või naerab närviliselt. Vajab pehmet füüsilist kontakti, laulmist/nalja, kutsumist käsu asemel ja rahulikke 1-on-1 pause."
+      }
+    };
+
+    let familyProfiles = JSON.parse(localStorage.getItem('fos_profiles_v3') || 'null') || defaultFamilyProfiles;
+
+    // --- 20 PROGRESSIIVSET 7-PÄEVAST EKSPERIMENTI ---
+    const defaultWeeks = [
+      { id: 1, title: "1. Nädal: 15-minuti rahulik maandumine", cat: "Närvisüsteem", goal: "Pärast töölt kojutulekut on 15 min ilma probleemide ja logistika arutamiseta.", why: "Kuna meil kõigil on avatud emotsionaalkeskus, vähendab 15 min vaikus õhtust pingeülekannet poole võrra." },
+      { id: 2, title: "2. Nädal: 30-sekundi hingamine enne sõnu", cat: "Eneseregulatsioon", goal: "Kui miski ajab närvi, hinga 30 sek enne rääkimist.", why: "Kaitseb lapsi (eriti Romat ja Norat) täiskasvanu pinge neelamise eest." },
+      { id: 3, title: "3. Nädal: Käest hoidmine enne palvet", cat: "Lapsed", goal: "Enne korralduse andmist mine lapse juurde ja hoia õrnalt käest või õlast.", why: "Asendab üle toa hüüdmise ja loob kohese füüsilise turvatunde." },
+      { id: 4, title: "4. Nädal: 3x päevas puudutus ilma tagamõtteta", cat: "Paarisuhe", goal: "Kallistus või pai ilma küsimata midagi vastu.", why: "Taastab turvatunde ja läheduse, et kodu tunduks armastava pesana." },
+      { id: 5, title: "5. Nädal: Kuulamine ilma parandamata", cat: "Suhtlus", goal: "Kui Katre räägib murest, kuula ja peegelda tunnet ilma kohese lahenduseta.", why: "Katre vajab enne lahendusi tunnet, et teda kuulatakse." },
+      { id: 6, title: "6. Nädal: Null kriitikat partnerile laste ees", cat: "Austus", goal: "Ära paranda partnerit laste kuuldes, isegi kui teeksid ise teisiti.", why: "Veikko (3/5) vajab vabadust proovida ja tunda sinu usaldust." },
+      { id: 7, title: "7. Nädal: Kella 17:00 'Koka eelroog'", cat: "Bioloogia", goal: "Paku porgandit/kurki/juustu 30 min enne õhtusööki.", why: "Hoiab veresuhkru stabiilsena ja lõpetab näljast tingitud jonni." },
+      { id: 8, title: "8. Nädal: Informeerimise reegel", cat: "Katre & Veikko", goal: "Ütle enne plaani muutmist või lahkumist lühidalt ette: 'Ma teen nüüd nii...'", why: "Manifestor Katre ja kogu pere närvisüsteem armastab selget etteaimatavust." },
+      { id: 9, title: "9. Nädal: Üks kodune ala lõpuni", cat: "Usaldus", goal: "Võta üks kodune ülesanne täielikult enda peale ilma teiselt küsimata.", why: "Võtab maha nähtamatu vaimse koorma." },
+      { id: 10, title: "10. Nädal: Roma 'Vaikne pesa & kutsumine'", cat: "3a Poiss", goal: "Kutsu Romat mänguliselt appi käsu asemel ja anna talle vaikset omaette aega.", why: "Projektorina õitseb ta tunnustuse peale ja vajab taastumispause." },
+      { id: 11, title: "11. Nädal: Nora 'Hubane pesa' & 20-min kell", cat: "Koduõpe (7a)", goal: "Koduõpe pehme pleedi, väikse snäki ja neutraalse 20-min taimeriga.", why: "Vastab tema Nervous Touch seedimisele ja võtab maha sooritushirmu." },
+      { id: 12, title: "12. Nädal: Üks siiras tänu päevas", cat: "Tunnustus", goal: "Nimeta valjusti üks väike asi, mille partner täna hästi tegi.", why: "Tõstab kogu pere positiivset energiat." },
+      { id: 13, title: "13. Nädal: A/B valikute nädal", cat: "Koostöö", goal: "Anna lastele ja Veikkole kaks selget valikut, mille vahel reageerida.", why: "Generaatorid ja MG-d töötavad kõige rõõmsamalt reageerides valikutele." },
+      { id: 14, title: "14. Nädal: Õhtune 3-minuti käest-kinni rituaal", cat: "Lähedus", goal: "Enne und 3 min telefonideta vestlust voodis.", why: "Hoiab ära kaugenemise ja taastab emotsionaalse intiimsuse." },
+      { id: 15, title: "15. Nädal: Aus vabandamine pärast tormi", cat: "Eeskuju", goal: "Kui kaotasid rahu, mine pärast lapse juurde ja leppige siiralt ära.", why: "Õpetab lastele, et vead on inimlikud." },
+      { id: 16, title: "16. Nädal: Muusika ja laul pingete maandajana", cat: "Mängulisus", goal: "Kasuta raskel üleminekul laulmist, rütmi või naljakat häält.", why: "Nii Veikkol kui Romal on 'High Sound' – meeldiv hääl rahustab neid kohe." },
+      { id: 17, title: "17. Nädal: Ekraanivaba viimane tund enne und", cat: "Uni", goal: "Kõik ekraanid kinni 60 min enne magamaminekut.", why: "Aitab Katre ja Roma avatud Sakraalidel enne und rahulikult maha laadida." },
+      { id: 18, title: "18. Nädal: 'Mina-sõnumid' süüdistuste asemel", cat: "Aus Suhtlus", goal: "Räägi oma tundest, mitte partneri veast.", why: "Keegi ei lähe kaitsesse." },
+      { id: 19, title: "19. Nädal: Ootamatu hooliv žest", cat: "Romantika", goal: "Tee sel nädalal üks väike ootamatu üllatus teisele.", why: "Toidab suhet mehe ja naisena." },
+      { id: 20, title: "20. Nädal: Pere ühine unistus & pidupäev", cat: "Ühtsus", goal: "Tähistage koos saavutusi ja planeerige midagi toredat.", why: "Kinnistab uue rahuliku perevundamendi." }
     ];
 
-    // --- 2. SÜVAPSYHHOLOOGILISED PÕHJALIKUD MEELISPEAD ---
-    const coupleAdviceData = {
-      Veikko: [
-        {
-          situation: 'Kui Katre ohkab, kurdab väsimust või räägib, kui raske lastega oli',
-          mistake: 'ÄRA paku kohe loogilisi lahendusi ("Aga miks sa siis ei puhanud?"). See paneb Katre tundma, et sa pisendad tema vaeva.',
-          action: 'Astu ligi, pane käsi tema õlale või ümber tema. Vaata talle soojalt otsa.',
-          words: '"Kallis, sa oled täna terve päeva andnud endast kõik. Tule istu, ma teen sulle tee ja vaatan lapsed järgmised 30 minutit. Sina ei pea mitte midagi tegema."',
-          subconscious: 'Katre närvisüsteem lülitub ohurežiimist turvatundesse. Ta näeb sinus tugevat kindlust. See toob tagasi soovi tulla sulle kaissu.',
-          benefit: 'Katre ei muutu näägutavaks ega kibestunuks, vaid pehmeks ja tänulikuks.'
-        },
-        {
-          situation: 'Kui Katre on pinges ja räägib teraval toonil',
-          mistake: 'ÄRA kärata vastu ega ütle "Rahune maha!". See vallandab temas paanika, et ta on üksi.',
-          action: 'Madalda oma häält, ära võta rünnakut isiklikult. Hoia oma pulss all.',
-          words: '"Ma kuulen, et sul on praegu tass täiesti tühi. Ma ei hakka sinuga vaidlema, ma olen sinu poolt. Kuidas ma saan sind praegu aidata?"',
-          subconscious: 'Katre relvad kukuvad käest, sest tal pole kellegagi sõdida.',
-          benefit: 'Tüli vaibub 2 minutiga 2 päeva pikkuse mossitamise asemel.'
-        }
-      ],
-      Katre: [
-        {
-          situation: 'Kui Veikko teeb lastega asju teistmoodi (mürgeldab, paneb teised riided)',
-          mistake: 'ÄRA paranda ega õpeta teda laste ees ("Mitte nii!"). See võtab mehelt tunde, et teda austatakse, ja paneb ta taanduma.',
-          action: 'Hinga sisse ja astu ruumist välja. Usalda tema mehelikku ja füüsilisemat viisi.',
-          words: '"Aitäh, et sa selle enda peale võtsid. Mul oli nii hea vaadata, kuidas poiss sind kuulab."',
-          subconscious: 'Veikko tunneb end pädeva mehe ja juhina. Mida rohkem teda tunnustatakse, seda rohkem tahab ta ise pere heaks vastutust võtta.',
-          benefit: 'Veikko ei istu telefonis, vaid on kohal ja aktiivne isa.'
-        },
-        {
-          situation: 'Kui Veikko tuleb töölt koju ja vajab 15 minutit vaikust',
-          mistake: 'ÄRA viska talle uksel kohe laste probleeme ja nõudmisi kaela. Mehe aju vajab üleminekuaega.',
-          action: 'Tervita teda soojalt kaisutusega ilma nõudmisteta.',
-          words: '"Tere kallis, hea et tulid. Võta rahulikult 15 minutit riiete vahetamiseks ja kohviks, siis räägime."',
-          subconscious: 'Kodu muutub mehele rahuoaasiks, mitte teiseks töökohaks. Ta kiirustab koju naise juurde, kes teda ootab.',
-          benefit: 'Pärast 15 min puhkust on Veikko 100% sinu ja laste päralt.'
-        }
-      ]
-    };
+    let weekProgress = JSON.parse(localStorage.getItem('fos_weeks_prog') || 'null') || {};
 
-    const secretAdvice = {
-      Veikko: `🔒 **Salajane spikker Veikkole Katre kohta:**\n\n• Katre ei vaja, et sa lahendaksid tema muresid – ta vajab, et sa **hooliksid sellest, kuidas ta end tunneb**.\n• Kui Katre ütleb "Kõik on hästi" kummalise häälega, ei ole kõik hästi. Kallista teda selja tagant ja ütle: *"Ma olen siin, sa ei pea üksi kõike kandma."*\n• Naise seksuaalne iha algab sellest, kuidas temaga suheldi hommikul kell 10, mitte voodis kell 23.`,
-      Katre: `🔒 **Salajane spikker Katrele Veikko kohta:**\n\n• Veikko vajab üle kõige maailmas teadmist, et tema naine **austab teda ja peab temast lugu**.\n• Mees ei suuda olla romantiline ja haavatav, kui ta tunneb, et teda kodus pidevalt arvustatakse või kontrollitakse.\n• Tunnusta tema väikeseid tegusid siiralt ja näed, kuidas tema silmadesse tuleb tagasi see säde, mis suhte alguses.`
-    };
+    // --- SYSTEM PROMPT ---
+    function getSystemContext() {
+      const pText = Object.values(familyProfiles).map(p => `${p.name} (${p.date} ${p.time}, ${p.place}): ${p.zodiac} | ${p.chinese} | ${p.hdType}. ${p.hdDesc} ${p.summary}`).join('\n');
+      const activeRules = commandments.slice(0, 10).join(' | ');
+      const recentIssues = incidents.slice(0, 3).map(i => `${i.title} (${i.child})`).join(', ');
 
-    // PIN-koodid
-    let userPins = JSON.parse(localStorage.getItem('fos_pins') || 'null') || { Veikko: '1111', Katre: '2222' };
+      return `Oled tark, sõbralik, neutraalne ja loogiline perenõustaja.
+REKLAAMIVABAD KULDREEGLID:
+1. Räägi nagu soe, objektiivne sõber – MITTE KUNAGI käskivalt, süüdistavalt ega loengut pidades.
+2. ÄRA KUNAGI korda kasutaja enda kirjutatud näiteid sõna-sõnalt.
+3. ÄRA KUNAGI maini vastuses astroloogiat, tähemärke, hiina loomi ega Human Designi sõnu! Kasuta allolevat süvainfot ainult taustal, et valida psühholoogiliselt just sellele inimesele kõige sobivam serveerimisviis.
+4. Teadlikkus: Kõigil pereliikmetel on ülitundlik peegeldav emotsiooniväli (kui üks on pinges, võimendavad teised seda). Ema ja poeg vajavad piisavalt taastumispause, isa ja tütar vajavad selgeid valikuid ja proovimisvabadust.
+
+PERE SÜVAPROFIILID:
+${pText}
+
+PERE AKTIIVSED KULDREEGLID: ${activeRules}
+HILJUTISED OLUKORRAD: ${recentIssues}
+
+VASTUSE KOHUSTUSLIK STRUKTUUR (EESTI KEELES):
+1. 🤝 **Sõbralik ja loogiline pilk olukorrale:** Miks see olukord võis tekkida (neutraalselt, ilma pooli valimata).
+2. 🪤 **Mida inimene võib sellises olukorras mõelda või teha (Eneseõigustused):** Too välja tüüpilised kaitsereaktsioonid, mis pähe tulevad, ja seleta neid rahulikult.
+3. 🔍 **Mis selle taga tegelikult peitub & kuhu kumbki tee viib:** Seleta loogiliselt, mis juhtub suhte/lapsega vana mustri jätkumisel vs mis muutub uue lähenemisega.
+4. ✅ **Kuidas proovida teistmoodi (Konkreetsed sammud & sõnad):** Kohandatud täpselt selle inimese loomusele.`;
+    }
+
+    async function callGeminiAPI(historyArray, newMessage, extraSystemPrompt = "") {
+      const apiKey = localStorage.getItem('fos_ai_key');
+      if (!apiKey) return "⚠️ Sisesta esmalt oma Google AI Studio võti ülevalt nupust '⚙️ Seaded'.";
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+      const contents = [
+        { role: "user", parts: [{ text: getSystemContext() + "\n" + extraSystemPrompt }] },
+        { role: "model", parts: [{ text: "Olen valmis toetama teie peret neutraalselt, loogiliselt ja soojalt." }] }
+      ];
+      historyArray.slice(-10).forEach(m => {
+        if (m.tempId) return;
+        const isModel = m.sender.includes('Family OS') || m.sender.includes('Nõustaja') || m.sender.includes('Treener');
+        contents.push({ role: isModel ? "model" : "user", parts: [{ text: `${m.sender}: ${m.text}` }] });
+      });
+      if (newMessage) contents.push({ role: "user", parts: [{ text: newMessage }] });
+
+      try {
+        const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents, tools: [{ google_search: {} }], generationConfig: { temperature: 0.75, maxOutputTokens: 1600 } }) });
+        if (res.ok) { const d = await res.json(); const txt = d.candidates?.[0]?.content?.parts?.map(p => p.text).join(''); if (txt) return txt; }
+      } catch (e) {}
+      try {
+        const res2 = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents, generationConfig: { temperature: 0.75, maxOutputTokens: 1600 } }) });
+        if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
+        const d2 = await res2.json();
+        return d2.candidates?.[0]?.content?.parts?.map(p => p.text).join('') || "Vastus jäi tühjaks.";
+      } catch (err) { return `❌ Ühenduse viga: ${err.message}`; }
+    }
+
+    // --- AUDIO ETTELUGEMINE ---
+    let voiceGender = localStorage.getItem('fos_voice_gender') || 'female';
+    function toggleVoiceGender() { voiceGender = voiceGender === 'female' ? 'male' : 'female'; localStorage.setItem('fos_voice_gender', voiceGender); document.getElementById('voiceGenderBtn').innerText = voiceGender === 'male' ? '🧔 Meeshääl' : '👩 Naishääl'; }
+    function speakText(rawText) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const clean = rawText.replace(/[*_#`>]/g, '').replace(/[\u{1F300}-\u{1F9FF}]/gu, '');
+      const u = new SpeechSynthesisUtterance(clean); u.lang = 'et-EE';
+      const etVoices = window.speechSynthesis.getVoices().filter(v => v.lang.startsWith('et'));
+      if (etVoices.length > 1) { const m = etVoices.find(v => voiceGender === 'male' ? /male|kalev|mees/i.test(v.name) : /female|naine/i.test(v.name)); if (m) u.voice = m; }
+      u.pitch = voiceGender === 'male' ? 0.78 : 1.12; u.rate = 0.96;
+      document.getElementById('stopAudioBtn').classList.remove('hidden');
+      u.onend = () => document.getElementById('stopAudioBtn').classList.add('hidden');
+      window.speechSynthesis.speak(u);
+    }
+    function stopSpeaking() { window.speechSynthesis.cancel(); document.getElementById('stopAudioBtn').classList.add('hidden'); }
+    function startVoice(id) { const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) { alert("Brauser ei toeta häält."); return; } const r = new SR(); r.lang = 'et-EE'; document.getElementById(id).placeholder = "Kuulan..."; r.onresult = e => { document.getElementById(id).value = e.results[0][0].transcript; }; r.start(); }
+
+    // --- OLEKUD ---
+    const userPins = { Veikko: '1111', Katre: '2222' };
     let currentUnlockedProfile = localStorage.getItem('fos_unlocked') || null;
     let pendingProfileTarget = null;
-
     let profile = localStorage.getItem('fos_profile') || 'Katre';
     let currentId = 'inc_first';
-    let commandments = JSON.parse(localStorage.getItem('fos_rules10') || 'null') || defaultCommandments;
+    let currentCoupleId = 'cpl_main';
+    let showAllRules = false;
+
+    let commandments = JSON.parse(localStorage.getItem('fos_rules10') || 'null') || [
+      "Löömine: Mine esmalt kannatanu juurde, lohuta teda, ja alles siis tegele rahulikult teisega.",
+      "Füüsiline kontakt: Mine lapse juurde, lasku silmade kõrgusele ja võta käest kinni enne rääkimist.",
+      "Reguleeri enne arutamist: Oota 5–10 min kuni hingamine rahuneb, enne kui selgitad.",
+      "Ei tühjadele vabandustele: Ära sunni vihahoos vabandama, taasta side pärast rahu saabumist.",
+      "Valikute andmine: Paku kahte sobivat valikut, et vähendada vastuseisu.",
+      "Pausi reegel: Kui üks vanem ütleb 'Paus', võtab teine olukorra rahulikult üle.",
+      "Ühtne rinne: Teise vanema piiri ei tühistata laste ees.",
+      "Peegelda soovi enne piiri: 'Ma tean, sa tahtsid veel mängida...'",
+      "Juurpõhjuse kontroll: Kas lapsel on nälg, väsimus või üleküllus?",
+      "Aus vabandus: Kui vanem kaotas rahu, taastame alati hiljem kontakti."
+    ];
+    let agreements = JSON.parse(localStorage.getItem('fos_agreements') || 'null') || ["🛡️ Ekraanid kinni 1h enne und.", "🛡️ Teise vanema piire austatakse laste ees."];
     let trackerLogs = JSON.parse(localStorage.getItem('fos_tracker_logs') || 'null') || [];
-    
     let incidents = JSON.parse(localStorage.getItem('fos_incidents') || 'null') || [
-      {
-        id: 'inc_first',
-        title: '3a poiss tegi väikesele vennale haiget',
-        child: '3a poiss & Vend',
-        updatedAt: Date.now(),
-        messages: [
-          { sender: 'Katre', text: 'Ta just tegi oma väikesele vennale haiget ja ma tunnen, et mul saab jaks otsa. Mida ma peaksin kohe tegema?' },
-          { 
-            sender: 'Family OS (Sõbralik Tugi)', 
-            text: `Kallis Katre, hinga esmalt korraks sügavalt välja. Sa teed suurepärast tööd ja sa pole halb ema. Su 3-aastane poiss ei ole kuri laps – tal lihtsalt viskas praegu kaane pealt ära.
-
-🧠 **Mis seal väikese mehe sees päriselt toimus?**
-3-aastase aju on nagu väike arvuti, millel jookseb korraga liiga palju programme kokku. Kui väike vend saab sinu tähelepanu, tunneb suurem poiss primitiivset hirmu: "Kas mina olen ikka emmele armas?". Tema käsi lööb enne, kui mõte järgi jõuab.
-
-⏱️ **Tee täpselt nii:**
-1. **Astu kohe vahele nagu rahulik kalju.** Ära karju üle toa. Pane oma käsi rahulikult vahele.
-2. **Lohuta esimesena väikest venda.** Miks? Sest kui sa hakkad kohe suuremat riidlema, saab ta just seda, mida otsis – sinu tugevat tähelepanu.
-3. **Vaata suuremale silma ja ütle rahuliku, madala häälega:**
-> *"Ma ei luba sul vennale haiget teha. Minu töö on hoida teid mõlemaid turvaliselt. Ma näen, et sul on kange hoog sees, aga löömine on keelatud."*
-4. **Ära sunni vabandama:** Praegu peale surutud "Ütle vabandust!" tekitab lapses trotsi ja õpetab silmakirjalikkust.
-5. **Istu tema lähedale maha.** Kui ta hakkab karjuma või asju pilduma, võta asjad vaikselt ära ja ütle: *"Ma istun siin ja ootan, kuni su keha rahuneb."* Ole seal 5 minutit ilma loenguta.`
-          }
-        ],
-        gameplan: `### 📋 SAMMUD: Vend tegi vennale haiget
-*Laps: 3a poiss & väike vend*
-
-1. **🛑 0–60 sek (Astu vahele):**
-- Astu rahulikult vahele nagu kaitsekilp.
-- Blokeeri käsi ilma vihata.
-- Lohuta esimesena väikest venda.
-
-2. **🗣️ Täpsed sõnad 3-aastasele:**
-> "Ma ei luba teha haiget. Minu töö on hoida teid mõlemaid turvaliselt. Löömine on keelatud."
-
-3. **⏳ 2–10 min (Rahunemine):**
-- Ära sunni ütlema "vabandust" ega pea loengut.
-- Istu lapse lähedale maha: *"Ma ootan, kuni su keha rahuneb."*`
-      }
+      { id: 'inc_first', title: 'Roma (3a) füüsiline hoog', child: 'Roma (3a)', updatedAt: Date.now(), messages: [{ sender: 'Katre', text: 'Ta lõi venda, kui tähelepanu oli mujal.' }, { sender: 'Family OS (Sõber)', text: '🤝 **Sõbralik pilk:**\n3-aastase aju reageerib hetkelise ohutundega enne, kui mõte järgi jõuab.\n\n✅ **Mida proovida:**\n1. Astu vahele ja lohuta esmalt kannatanut.\n2. Võta Romal õrnalt käest kinni ja ütle rahulikult: *"Meie kodus haiget ei tehta. Ma aitan sul rahuneda."*' }], gameplan: '1. Lohuta kannatanut.\n2. Võta käest kinni.\n3. Hoia rahu 5 min.' }
     ];
-
-    let coupleChat = JSON.parse(localStorage.getItem('fos_couple_chat') || 'null') || [
-      { sender: 'Family OS', text: 'Tere Veikko ja Katre! Siin saate arutada oma suhet. Kirjutage siia julgelt teema, mis vaevab, ja otsime koos sõbraliku, teineteist austava lahenduse.' }
+    let coupleTopics = JSON.parse(localStorage.getItem('fos_couple_topics') || 'null') || [
+      { id: 'cpl_main', title: 'Üldine suhtevestlus', messages: [{ sender: 'Family OS (Sõber)', text: 'Tere Katre ja Veikko! Siin saate rahulikult ja sõbralikult arutada kõiki suheteemasid.' }] }
     ];
-
+    let schoolChat = JSON.parse(localStorage.getItem('fos_school_chat') || 'null') || [{ sender: 'Family OS (Sõber)', text: 'Küsi siin Nora (7a) koduõppe ja keskendumise kohta.' }];
     let privateChats = JSON.parse(localStorage.getItem('fos_private_chats') || 'null') || { Veikko: [], Katre: [] };
-
-    let wins = JSON.parse(localStorage.getItem('fos_wins') || 'null') || [
-      "Hommikul saime ilma karjumiseta uksest välja! 🚀",
-      "Veikko võttis õhtul lapsed enda peale ja Katre sai rahulikult duši all käia. 💛"
-    ];
-
-    let db = null;
-    let isCloud = false;
+    let wins = JSON.parse(localStorage.getItem('fos_wins') || 'null') || ["Hommikul saime rahulikult uksest välja! 🚀"];
+    let db = null, isCloud = false;
 
     // --- INIT ---
     document.addEventListener('DOMContentLoaded', () => {
-      initFirebaseFromStorage();
-      checkAIStatus();
-      setProfile(profile, true);
-      renderCommandments();
-      renderIncList();
-      selectInc(currentId);
-      renderPlans();
-      renderWins();
-      renderTrackerLogs();
-      renderCoupleChat();
+      document.getElementById('voiceGenderBtn').innerText = voiceGender === 'male' ? '🧔 Meeshääl' : '👩 Naishääl';
+      initFirebase(); checkAIStatus(); setProfile(profile);
+      renderCommandments(); renderIncList(); selectInc(currentId);
+      renderCoupleTopicList(); selectCoupleTopic(currentCoupleId);
+      renderPlans(); renderWins(); renderAgreements(); renderTrackerLogs();
+      renderSchoolChat(); renderProfiles(); renderWeeks(); renderNoraSchoolGuide();
+      generateDailySecretMission(true);
     });
 
-    // --- PROFIILID & PIN-KOOD ---
-    function requestSwitchProfile(target) {
-      if (currentUnlockedProfile === target) {
-        setProfile(target);
-        return;
-      }
-      pendingProfileTarget = target;
-      document.getElementById('pinTargetName').innerText = `${target} profiili avamine`;
-      document.getElementById('pinIcon').innerText = target === 'Veikko' ? '🧔' : '👩';
-      document.getElementById('pinInput').value = '';
-      document.getElementById('pinError').classList.add('hidden');
-      openM('pinModal');
-      setTimeout(() => document.getElementById('pinInput').focus(), 100);
-    }
+    // --- FIREBASE ---
+    function initFirebase() {
+      try {
+        if (!firebase.apps.length) firebase.initializeApp(BUILTIN_FIREBASE_CONFIG);
+        db = firebase.firestore(); isCloud = true;
+        document.getElementById('syncBadge').className = 'text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-200';
+        document.getElementById('syncBadge').innerText = '🟢 Pilves';
 
-    function verifyPin() {
-      const input = document.getElementById('pinInput').value.trim();
-      const expected = userPins[pendingProfileTarget];
-      if (input === expected) {
-        currentUnlockedProfile = pendingProfileTarget;
-        localStorage.setItem('fos_unlocked', currentUnlockedProfile);
-        setProfile(pendingProfileTarget);
-        closeM('pinModal');
-      } else {
-        document.getElementById('pinError').classList.remove('hidden');
-      }
-    }
-
-    function lockProfile() {
-      currentUnlockedProfile = null;
-      localStorage.removeItem('fos_unlocked');
-      switchCoupleSubTab('shared');
-      alert("Profiil on lukustatud.");
-    }
-
-    function setProfile(p, skipPinCheck = false) {
-      profile = p;
-      localStorage.setItem('fos_profile', p);
-      document.getElementById('btnV').className = p === 'Veikko' ? 'px-2 py-1 text-xs font-bold rounded-lg bg-white shadow-sm text-indigo-700' : 'px-2 py-1 text-xs font-bold rounded-lg text-slate-500';
-      document.getElementById('btnK').className = p === 'Katre' ? 'px-2 py-1 text-xs font-bold rounded-lg bg-white shadow-sm text-rose-700' : 'px-2 py-1 text-xs font-bold rounded-lg text-slate-500';
-
-      document.getElementById('privateTabTitle').innerText = `${p} Salajane Ruum`;
-      document.getElementById('privateHeaderName').innerText = `${p} Isiklik Nõustamisruum`;
-      document.getElementById('privateTipsCard').innerHTML = secretAdvice[p].replace(/\n/g, '<br>');
-
-      renderCoupleAdvice();
-      renderRoleCard();
-      renderPrivateChat();
-    }
-
-    function renderRoleCard() {
-      const card = document.getElementById('cardRole');
-      const isV = profile === 'Veikko';
-      card.innerHTML = `
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-          <div class="flex items-center gap-1.5">
-            <span class="text-xl">${isV ? '🧔' : '👩'}</span>
-            <h3 class="font-extrabold text-xs text-slate-900">${profile} Päeva Fookus:</h3>
-          </div>
-          <div class="text-xs text-slate-700 space-y-1.5 leading-relaxed">
-            ${isV ? `
-              <p>• <strong>3a Poiss:</strong> Tema kangekaelsuse vastu ei aita jõud, vaid kavalus ja rahulik keha. Mürgelda temaga enne õhtusööki 10 minutit padjaga.</p>
-              <p>• <strong>7a Tütar:</strong> Küsi kooli kohta ja kuula ilma õpetamata. Tütar tahab tunda, et isa on tema fänn.</p>
-              <p>• <strong>Katre:</strong> Kui näed tema väsimust, ütle: <em>"Mine puhka, mina vastutan nüüd."</em></p>
-            ` : `
-              <p>• <strong>3a Poiss:</strong> Enne piiri seadmist peegelda tema soovi ja paku sülle tulekut. Lähedus enne nõudmist.</p>
-              <p>• <strong>7a Tütar:</strong> Õhtune voodiserval sosistamine – lase tal kurta ilma loenguta.</p>
-              <p>• <strong>Veikko:</strong> Usalda tema lahendusi lastega ja kiida teda laste ees.</p>
-            `}
-          </div>
-        </div>`;
-    }
-
-    // --- 10 KULDREEGLIT ---
-    function renderCommandments() {
-      const container = document.getElementById('commandmentsList');
-      container.innerHTML = commandments.map((c, i) => `
-        <div class="bg-white/80 border border-indigo-100 p-2.5 rounded-xl flex items-start gap-2 shadow-2xs">
-          <span class="text-xs">📌</span>
-          <span class="text-[11px] text-slate-800 leading-snug">${c}</span>
-        </div>
-      `).join('');
-    }
-
-    function renderEditRules() {
-      const container = document.getElementById('editRulesList');
-      container.innerHTML = commandments.map((c, idx) => `
-        <div class="flex items-center gap-2 p-1.5 bg-slate-50 border rounded-xl">
-          <input type="text" value="${c}" id="rule_${idx}" class="flex-1 text-xs p-1 bg-transparent outline-none">
-          <button onclick="saveRule(${idx})" class="text-indigo-600 font-bold text-xs">Salvesta</button>
-          <button onclick="deleteRule(${idx})" class="text-rose-500 font-bold text-xs">&times;</button>
-        </div>
-      `).join('');
-    }
-
-    function saveRule(idx) {
-      const val = document.getElementById(`rule_${idx}`).value.trim();
-      if (val) {
-        commandments[idx] = val;
-        saveRulesData();
-      }
-    }
-
-    function deleteRule(idx) {
-      commandments.splice(idx, 1);
-      saveRulesData();
-      renderEditRules();
-    }
-
-    function addNewRulePrompt() {
-      const r = prompt("Sisesta uus kuldreegel:");
-      if (r && r.trim()) {
-        commandments.push(`${commandments.length + 1}. ${r.trim()}`);
-        saveRulesData();
-        renderEditRules();
-      }
-    }
-
-    function saveRulesData() {
-      localStorage.setItem('fos_rules10', JSON.stringify(commandments));
-      renderCommandments();
-      if (isCloud && db) db.collection('family_os').doc('rules10_data').set({ commandments, updatedAt: Date.now() });
-    }
-
-    // --- TABS ---
-    function tab(name) {
-      ['dash', 'couple', 'inc', 'tracker', 'school', 'roleplay', 'plans', 'tools'].forEach(t => {
-        document.getElementById('p-' + t).classList.add('hidden');
-        document.getElementById('t-' + t).className = 'py-1.5 px-2.5 rounded-lg text-slate-500 whitespace-nowrap font-medium';
-      });
-      document.getElementById('p-' + name).classList.remove('hidden');
-      document.getElementById('t-' + name).className = 'py-1.5 px-2.5 rounded-lg bg-indigo-50 text-indigo-700 font-bold whitespace-nowrap';
-      if (name === 'dash') renderCommandments();
-    }
-
-    // --- SUHTE VAATE ALAM-TABID (ÜHINE VS PRIVAATNE) ---
-    function switchCoupleSubTab(sub) {
-      if (sub === 'private') {
-        if (currentUnlockedProfile !== profile) {
-          requestSwitchProfile(profile);
-          return;
-        }
-        document.getElementById('viewSharedCouple').classList.add('hidden');
-        document.getElementById('viewPrivateCouple').classList.remove('hidden');
-        document.getElementById('subTabPrivate').className = 'flex-1 py-1.5 rounded-xl bg-slate-900 text-white shadow-xs text-center flex items-center justify-center gap-1 font-bold';
-        document.getElementById('subTabShared').className = 'flex-1 py-1.5 rounded-xl text-slate-600 text-center font-bold';
-      } else {
-        document.getElementById('viewSharedCouple').classList.remove('hidden');
-        document.getElementById('viewPrivateCouple').classList.add('hidden');
-        document.getElementById('subTabShared').className = 'flex-1 py-1.5 rounded-xl bg-white text-indigo-700 shadow-xs text-center font-bold';
-        document.getElementById('subTabPrivate').className = 'flex-1 py-1.5 rounded-xl text-slate-600 text-center flex items-center justify-center gap-1 font-bold';
-      }
-    }
-
-    // --- KÄITUMISPÄEVIK (TRIGGER TRACKER) ---
-    function saveTrackerLog() {
-      const child = document.getElementById('trChild').value;
-      const behavior = document.getElementById('trBehavior').value;
-      const trigger = document.getElementById('trTrigger').value;
-      const time = new Date().toLocaleTimeString('et-EE', { hour: '2-digit', minute: '2-digit' });
-
-      const log = { id: Date.now(), child, behavior, trigger, time, date: new Date().toLocaleDateString('et-EE') };
-      trackerLogs.unshift(log);
-      localStorage.setItem('fos_tracker_logs', JSON.stringify(trackerLogs));
-      closeM('logTrackerModal');
-      renderTrackerLogs();
-    }
-
-    function renderTrackerLogs() {
-      const container = document.getElementById('trackerLogsList');
-      if (!trackerLogs.length) {
-        container.innerHTML = '<p class="text-slate-400 text-[11px] p-2 text-center">Päevikukandeid veel pole.</p>';
-        return;
-      }
-      container.innerHTML = trackerLogs.slice(0, 10).map((l, idx) => `
-        <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-center text-xs">
-          <div>
-            <strong>${l.child} • ${l.behavior}</strong>
-            <div class="text-[10px] text-slate-500">Päästik: <span class="text-rose-700 font-semibold">${l.trigger}</span> (${l.date} kell ${l.time})</div>
-          </div>
-          <button onclick="deleteTrackerLog(${idx})" class="text-slate-400 hover:text-rose-600 font-bold ml-2">&times;</button>
-        </div>
-      `).join('');
-
-      // Lihtne statistika päästikute mustri kohta
-      const counts = {};
-      trackerLogs.forEach(l => counts[l.trigger] = (counts[l.trigger] || 0) + 1);
-      const topTrigger = Object.keys(counts).sort((a,b) => counts[b] - counts[a])[0];
-      if (topTrigger) {
-        document.getElementById('patternText').innerHTML = `Viimaste andmete põhjal on kõige sagedasem tüli tekitaja <strong>${topTrigger}</strong> (${counts[topTrigger]} korda). Enneta seda toitainete ja ülemineku märguandega 15 min varem!`;
-      }
-    }
-
-    function deleteTrackerLog(idx) {
-      trackerLogs.splice(idx, 1);
-      localStorage.setItem('fos_tracker_logs', JSON.stringify(trackerLogs));
-      renderTrackerLogs();
-    }
-
-    // --- ROLLIMÄNGU SIMULAATOR ---
-    let roleplayHistory = [];
-    function startRoleplay() {
-      const sc = document.getElementById('roleplayScenario').value;
-      document.getElementById('roleplayBox').classList.remove('hidden');
-      roleplayHistory = [];
-      const title = document.getElementById('roleplayScenario').selectedOptions[0].text;
-      document.getElementById('roleplayTitle').innerText = title;
-
-      let greeting = "";
-      if (sc === '3a_shoes') greeting = "👦 3a Poiss: 'EI PANE SAAPAID! Lollid saapad! *viskab saapa vastu seina ja jookseb teki alla*'";
-      else if (sc === '7a_screen') greeting = "👧 7a Tütar: 'Sa oled nii ebaõiglane! Kõik teised saavad kauem vaadata, sa vihkad mind!'";
-      else if (sc === 'siblings_fight') greeting = "💥 Lapsed: 'SEE ON MINU OMA!' *3a poiss hammustab venda käest ja vend karjub valust*";
-      else greeting = "💑 Partner: 'Mina pean siin majas alati kõike üksi tegema, sa tuled ja lihtsalt istud!'";
-
-      roleplayHistory.push({ sender: 'Simulaator', text: greeting });
-      renderRoleplayChat();
-    }
-
-    function closeRoleplay() {
-      document.getElementById('roleplayBox').classList.add('hidden');
-    }
-
-    function renderRoleplayChat() {
-      const box = document.getElementById('roleplayChat');
-      box.innerHTML = roleplayHistory.map(m => `
-        <div class="p-2 rounded-xl text-xs ${m.sender === 'Sina' ? 'bg-indigo-600 text-white ml-6' : (m.sender === 'Treener' ? 'bg-emerald-50 text-emerald-950 border border-emerald-200' : 'bg-slate-200 text-slate-900 mr-6')}">
-          <div class="text-[9px] font-bold opacity-75">${m.sender}</div>
-          <div>${m.text}</div>
-        </div>
-      `).join('');
-      box.scrollTop = box.scrollHeight;
-    }
-
-    async function sendRoleplayMsg(e) {
-      e.preventDefault();
-      const input = document.getElementById('roleplayInput');
-      const text = input.value.trim();
-      if (!text) return;
-      input.value = '';
-
-      roleplayHistory.push({ sender: 'Sina', text });
-      renderRoleplayChat();
-
-      // Treeneri tagasiside ja lapse reaktsioon
-      setTimeout(() => {
-        let coachFeedback = "💡 Treeneri nõuanne: Hea algus! Pea meeles laskuda silmade kõrgusele ja hoida hääletoon madal.";
-        let simReply = "👦 Laps vaatab sulle otsa, käed ristis: 'Aga miks ma pean? Ma tahan siia jääda!'";
-        
-        roleplayHistory.push({ sender: 'Treener', text: coachFeedback });
-        roleplayHistory.push({ sender: 'Simulaator', text: simReply });
-        renderRoleplayChat();
-      }, 700);
-    }
-
-    // --- PRIVAATNE SUHTENÕUSTAJA CHAT ---
-    function renderPrivateChat() {
-      const box = document.getElementById('privateChatBox');
-      const list = privateChats[profile] || [];
-      if (!list.length) {
-        box.innerHTML = `<div class="p-2 text-slate-400 text-center italic text-xs">Siin on sinu täiesti salajane ruum. Küsi mida iganes ja saad toetava psühholoogilise vastuse.</div>`;
-        return;
-      }
-      box.innerHTML = list.map(m => `
-        <div class="flex flex-col ${m.sender.includes('Nõustaja') ? 'items-start' : 'items-end'}">
-          <span class="text-[9px] text-slate-400 mb-0.5 px-1">${m.sender}</span>
-          <div class="max-w-[90%] p-2.5 rounded-2xl ${m.sender.includes('Nõustaja') ? 'bg-slate-100 text-slate-800' : 'bg-slate-900 text-white'}">
-            ${m.text}
-          </div>
-        </div>
-      `).join('');
-      box.scrollTop = box.scrollHeight;
-    }
-
-    async function sendPrivateMsg(e) {
-      e.preventDefault();
-      const input = document.getElementById('privateChatInput');
-      const text = input.value.trim();
-      if (!text) return;
-      input.value = '';
-
-      if (!privateChats[profile]) privateChats[profile] = [];
-      privateChats[profile].push({ sender: profile, text });
-      renderPrivateChat();
-      localStorage.setItem('fos_private_chats', JSON.stringify(privateChats));
-
-      // Sõbralik nõustaja vastus
-      setTimeout(() => {
-        privateChats[profile].push({
-          sender: 'Nõustaja (Ainult Sinule)',
-          text: `Mõistan su tunnet täiesti ja on väga loomulik, et sa seda praegu tunned. Su partner ei tee seda selleks, et sulle meelega haiget teha – tema käitumise taga on hetkel kurnatus ja ülekoormus.\n\nProovi täna sellist väikest nippi: ära tõstata seda teemat vastasseisuna. Mine tema selja taha, pane käed ümber ja ütle: "Ma näen, et meil mõlemal on raske. Ma tahan, et meil oleks hea." Vaata, kuidas tema kehakeel koheselt pehmeneb.`
+        db.collection('family_os').doc('shared_state').onSnapshot(doc => {
+          if (doc.exists && doc.data().clientId !== CLIENT_ID) {
+            const d = doc.data();
+            if (d.sharedAiKey && !localStorage.getItem('fos_ai_key')) { localStorage.setItem('fos_ai_key', d.sharedAiKey); checkAIStatus(); }
+            if (d.incidents) { incidents = d.incidents; renderIncList(); renderChat(); renderPlans(); }
+            if (d.agreements) { agreements = d.agreements; renderAgreements(); }
+            if (d.commandments) { commandments = d.commandments; renderCommandments(); }
+            if (d.wins) { wins = d.wins; renderWins(); }
+            if (d.trackerLogs) { trackerLogs = d.trackerLogs; renderTrackerLogs(); }
+            if (d.coupleTopics) { coupleTopics = d.coupleTopics; renderCoupleTopicList(); renderCoupleChat(); }
+            if (d.schoolChat) { schoolChat = d.schoolChat; renderSchoolChat(); }
+            if (d.weekProgress) { weekProgress = d.weekProgress; renderWeeks(); }
+            if (d.familyProfiles) { familyProfiles = d.familyProfiles; renderProfiles(); renderNoraSchoolGuide(); }
+            if (d.gratitude) document.getElementById('latestGratitude').innerText = d.gratitude;
+          }
         });
-        renderPrivateChat();
-        localStorage.setItem('fos_private_chats', JSON.stringify(privateChats));
-      }, 600);
+        db.collection('family_os').doc('sos_signal').onSnapshot(doc => {
+          if (doc.exists) {
+            const data = doc.data();
+            if (data.sender && data.sender !== profile && (Date.now() - data.timestamp < 300000)) {
+              document.getElementById('partnerSosText').innerText = `🚨 ${data.sender} vajab abi!`;
+              document.getElementById('partnerSosBanner').classList.remove('hidden');
+            } else { document.getElementById('partnerSosBanner').classList.add('hidden'); }
+          }
+        });
+        ['Veikko', 'Katre'].forEach(u => {
+          db.collection('family_os').doc(`private_${u}`).onSnapshot(doc => {
+            if (doc.exists && doc.data().clientId !== CLIENT_ID) { privateChats[u] = doc.data().messages || []; if (profile === u) renderPrivateChat(); }
+          });
+        });
+      } catch (e) {}
     }
 
-    // --- SUHTE SÜVANÕUANDED ---
-    function renderCoupleAdvice() {
-      const box = document.getElementById('coupleDeepAdvice');
-      const items = coupleAdviceData[profile] || coupleAdviceData['Veikko'];
-      box.innerHTML = items.map(item => `
-        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs">
-          <div class="font-bold text-slate-900 text-[11px] bg-slate-100 p-2 rounded-xl">⚡ Olukord: ${item.situation}</div>
-          <div class="p-2 bg-rose-50 border border-rose-200 rounded-xl text-rose-950"><strong>🚫 ÄRA TEE NII:</strong> ${item.mistake}</div>
-          <div class="p-2 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-950 space-y-1">
-            <strong>✅ TEE HOOPIS NII:</strong> ${item.action}
-            <div class="p-1.5 bg-white border border-emerald-300 rounded-lg italic font-medium text-emerald-900 mt-1">${item.words}</div>
-          </div>
-          <div class="p-2 bg-indigo-50 border border-indigo-200 rounded-xl text-indigo-950 space-y-0.5">
-            <strong>🧠 Partneri alateadvuses:</strong> ${item.subconscious}
-            <p class="font-bold text-indigo-900 mt-1">💎 Kasu teie suhtele: ${item.benefit}</p>
-          </div>
-        </div>
-      `).join('');
-    }
+    function pushSharedState() {
+      localStorage.setItem('fos_incidents', JSON.stringify(incidents));
+      localStorage.setItem('fos_agreements', JSON.stringify(agreements));
+      localStorage.setItem('fos_rules10', JSON.stringify(commandments));
+      localStorage.setItem('fos_wins', JSON.stringify(wins));
+      localStorage.setItem('fos_tracker_logs', JSON.stringify(trackerLogs));
+      localStorage.setItem('fos_couple_topics', JSON.stringify(coupleTopics));
+      localStorage.setItem('fos_school_chat', JSON.stringify(schoolChat));
+      localStorage.setItem('fos_weeks_prog', JSON.stringify(weekProgress));
+      localStorage.setItem('fos_profiles_v3', JSON.stringify(familyProfiles));
 
-    // --- KÕIK MUUD FUNKTSIOONID (JUHTUMID, SOS, TÖÖRIISTAD) ---
-    function triggerSOS() {
-      openM('sosModal');
-      if (isCloud && db) db.collection('family_os').doc('sos_signal').set({ sender: profile, timestamp: Date.now() });
-    }
-    function dismissSosAlert() {
-      document.getElementById('partnerSosBanner').classList.add('hidden');
-      if (isCloud && db) db.collection('family_os').doc('sos_signal').set({ sender: null, timestamp: 0 });
-    }
-
-    function renderWins() {
-      const list = document.getElementById('winsList');
-      list.innerHTML = wins.map((w, idx) => `
-        <div class="p-2 bg-emerald-50/60 border border-emerald-200 rounded-xl flex justify-between items-center text-xs text-emerald-950">
-          <span>${w}</span>
-          <button onclick="removeWin(${idx})" class="text-slate-400 hover:text-rose-600 ml-2 font-bold">&times;</button>
-        </div>`).join('');
-    }
-    function addWinPrompt() {
-      const w = prompt("Mis täna hästi läks? (Iga väike võit loeb!):");
-      if (w && w.trim()) {
-        wins.unshift("✨ " + w.trim());
-        localStorage.setItem('fos_wins', JSON.stringify(wins));
-        renderWins();
+      if (isCloud && db) {
+        db.collection('family_os').doc('shared_state').set({
+          incidents, agreements, commandments, wins, trackerLogs, coupleTopics, schoolChat, weekProgress, familyProfiles,
+          sharedAiKey: localStorage.getItem('fos_ai_key') || null,
+          gratitude: document.getElementById('latestGratitude').innerText, clientId: CLIENT_ID, updatedAt: Date.now()
+        }, { merge: true }).catch(() => {});
       }
     }
-    function removeWin(idx) {
-      wins.splice(idx, 1);
-      localStorage.setItem('fos_wins', JSON.stringify(wins));
-      renderWins();
+
+    function formatMsg(txt) {
+      return txt.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
     }
 
-    function sendGratitude() {
-      const input = document.getElementById('gratitudeInput');
-      const text = input.value.trim();
-      if (!text) return;
-      const msg = `"${text}" – ${profile}`;
-      document.getElementById('latestGratitude').innerText = msg;
-      localStorage.setItem('fos_gratitude', msg);
-      if (isCloud && db) db.collection('family_os').doc('gratitude_data').set({ message: msg, sender: profile, timestamp: Date.now() });
-      input.value = '';
-      closeM('gratitudeModal');
-      alert("Tänusõna saadetud partnerile! 💛");
+    // --- KULDREEGLID (TOP 10 + VAATA VEEL + ÜMBERJÄRJESTAMINE) ---
+    function tryAddRuleToTop10(ruleText) {
+      const clean = ruleText.trim(); if (!clean) return;
+      commandments.push(clean);
+      pushSharedState(); renderCommandments();
+      alert("Reegel lisatud! Saad selle asukohta muuta nupust '✏️ Järjesta & Muuda'.");
     }
-
-    function renderIncList() {
-      const list = document.getElementById('incList');
-      if (!incidents.length) { list.innerHTML = `<p class="text-[11px] text-slate-400 p-2 text-center">Juhtumeid pole veel.</p>`; return; }
-      list.innerHTML = incidents.map(i => `
-        <div onclick="selectInc('${i.id}')" class="p-2.5 rounded-xl cursor-pointer border transition ${i.id === currentId ? 'bg-indigo-50/80 border-indigo-300 shadow-sm' : 'bg-slate-50/60 border-slate-100 hover:bg-slate-100/80'}">
-          <div class="flex justify-between items-start gap-1">
-            <h4 class="font-bold text-xs text-slate-800 line-clamp-1">${i.title}</h4>
-            <span class="text-[9px] bg-slate-200 text-slate-700 px-1.5 py-0.2 rounded font-medium">${i.child}</span>
-          </div>
-          <p class="text-[10px] text-slate-500 mt-1 line-clamp-1">${i.messages[i.messages.length - 1]?.text || 'Vestlus avatud'}</p>
+    function renderCommandments() {
+      const slice = showAllRules ? commandments : commandments.slice(0, 10);
+      document.getElementById('commandmentsList').innerHTML = slice.map((c, i) => `
+        <div class="bg-white/80 border p-2.5 rounded-xl flex gap-2 text-[11px]">
+          <span class="font-bold text-indigo-700">${i+1}.</span><span>${c}</span>
+        </div>`).join('');
+      const wrap = document.getElementById('moreRulesBtnWrap');
+      if (commandments.length > 10) {
+        wrap.classList.remove('hidden');
+        document.getElementById('toggleRulesBtn').innerText = showAllRules ? '🔼 Näita ainult Top 10' : `📖 Vaata kõiki reegleid (+${commandments.length - 10} veel)`;
+      } else { wrap.classList.add('hidden'); }
+    }
+    function toggleShowAllRules() { showAllRules = !showAllRules; renderCommandments(); }
+    function renderEditRules() {
+      document.getElementById('editRulesList').innerHTML = commandments.map((c, i) => `
+        <div class="flex items-center gap-1 p-1.5 bg-slate-50 border rounded-xl">
+          <span class="text-[10px] font-bold text-slate-400 w-4">${i+1}.</span>
+          <input type="text" value="${c}" id="rule_${i}" onchange="commandments[${i}]=this.value;pushSharedState();renderCommandments();" class="flex-1 text-xs bg-transparent outline-none">
+          <button onclick="moveRule(${i},-1)" class="px-1 text-slate-500 hover:text-indigo-600" ${i===0?'disabled':''}>⬆️</button>
+          <button onclick="moveRule(${i},1)" class="px-1 text-slate-500 hover:text-indigo-600" ${i===commandments.length-1?'disabled':''}>⬇️</button>
+          <button onclick="commandments.splice(${i},1);pushSharedState();renderCommandments();renderEditRules();" class="text-rose-500 font-bold px-1">&times;</button>
         </div>`).join('');
     }
+    function moveRule(i, dir) {
+      const target = i + dir; if (target < 0 || target >= commandments.length) return;
+      const temp = commandments[i]; commandments[i] = commandments[target]; commandments[target] = temp;
+      pushSharedState(); renderCommandments(); renderEditRules();
+    }
+    function addNewRulePrompt() { const r = prompt("Uus kuldreegel:"); if (r) { commandments.push(r.trim()); pushSharedState(); renderCommandments(); renderEditRules(); } }
 
-    function selectInc(id) {
-      currentId = id;
-      const inc = incidents.find(i => i.id === id);
-      if (!inc) return;
-      document.getElementById('chatTitle').innerText = inc.title;
-      document.getElementById('chatSub').innerText = inc.child;
-      renderIncList();
-      renderChat();
+    // --- KIIRVALIKUD (AVAVAD OLEMASOLEVA TEEMA VESTLUSE!) ---
+    async function openOrStartTopic(mode, topicId, childOrSub, title, initialPrompt) {
+      if (mode === 'inc') {
+        const existing = incidents.find(i => i.id === topicId);
+        if (existing) { selectInc(existing.id); return; }
+        const inc = { id: topicId, title, child: childOrSub, updatedAt: Date.now(), messages: [{ sender: profile, text: initialPrompt }], gameplan: null };
+        incidents.unshift(inc); pushSharedState(); selectInc(inc.id);
+        await generateIncidentReply(inc, initialPrompt);
+      } else {
+        const existing = coupleTopics.find(t => t.id === topicId);
+        if (existing) { selectCoupleTopic(existing.id); return; }
+        const top = { id: topicId, title, messages: [{ sender: profile, text: initialPrompt }] };
+        coupleTopics.unshift(top); pushSharedState(); selectCoupleTopic(top.id);
+        await generateCoupleReply(top, initialPrompt);
+      }
     }
 
-    function renderChat() {
-      const inc = incidents.find(i => i.id === currentId);
-      if (!inc) return;
-      const box = document.getElementById('chatBox');
-      box.innerHTML = inc.messages.map(m => {
-        const isAI = m.sender.includes('Family OS') || m.sender.includes('Sõbralik');
-        const isMe = m.sender === profile;
+    // --- VESTLUSTE RENDERDAMINE ---
+    function renderChatListHelper(arr, boxId) {
+      const b = document.getElementById(boxId);
+      b.innerHTML = arr.map(m => {
+        const ai = m.sender.includes('Family OS') || m.sender.includes('Nõustaja') || m.sender.includes('Treener');
+        const me = m.sender === profile;
         return `
-          <div class="flex flex-col ${isAI ? 'items-start' : (isMe ? 'items-end' : 'items-start')}">
-            <span class="text-[9px] text-slate-400 mb-0.5 px-1 font-semibold">${m.sender}</span>
-            <div class="max-w-[92%] sm:max-w-[88%] p-3 rounded-2xl leading-relaxed ${
-              isAI ? 'bg-slate-100 border border-slate-200 text-slate-800 whitespace-pre-line' : 
-              (isMe ? 'bg-indigo-600 text-white rounded-br-none shadow-sm' : 'bg-rose-600 text-white rounded-bl-none shadow-sm')
-            }">
-              ${m.text}
+          <div class="flex flex-col ${ai?'items-start':(me?'items-end':'items-start')}">
+            <span class="text-[9px] text-slate-400 px-1 font-semibold">${m.sender}</span>
+            <div class="max-w-[92%] p-3 rounded-2xl leading-relaxed ${ai?'bg-slate-100 border text-slate-800':(me?'bg-indigo-600 text-white':'bg-rose-600 text-white')}">
+              <div>${formatMsg(m.text)}</div>
+              ${ai && !m.tempId ? `
+                <div class="mt-2 pt-1.5 border-t border-slate-200/70 flex gap-2">
+                  <button onclick="speakText(${JSON.stringify(m.text)})" class="text-[10px] font-bold text-indigo-700 bg-white px-2 py-0.5 rounded border">🔊 Kuula</button>
+                  <button onclick="tryAddRuleToTop10(${JSON.stringify(m.text.slice(0,95)+'...')})" class="text-[10px] font-bold text-emerald-700 bg-white px-2 py-0.5 rounded border">📌 Lisa Reeglitesse</button>
+                </div>` : ''}
             </div>
           </div>`;
       }).join('');
-      box.scrollTop = box.scrollHeight;
+      b.scrollTop = b.scrollHeight;
     }
 
-    function addIncident(e) {
-      e.preventDefault();
-      const title = document.getElementById('inTitle').value.trim();
-      const child = document.getElementById('inChild').value;
-      const msg = document.getElementById('inMsg').value.trim();
+    function renderIncList() { document.getElementById('incList').innerHTML = incidents.map(i => `<div onclick="selectInc('${i.id}')" class="p-2.5 rounded-xl cursor-pointer border ${i.id===currentId?'bg-indigo-50 border-indigo-300':'bg-slate-50'}"><div class="flex justify-between"><h4 class="font-bold text-xs line-clamp-1">${i.title}</h4><span class="text-[9px] bg-slate-200 px-1.5 rounded">${i.child}</span></div><p class="text-[10px] text-slate-500 mt-1 line-clamp-1">${i.messages[i.messages.length-1]?.text||''}</p></div>`).join(''); }
+    function selectInc(id) { currentId=id; const inc=incidents.find(i=>i.id===id); if(!inc)return; document.getElementById('chatTitle').innerText=inc.title; document.getElementById('chatSub').innerText=inc.child; renderIncList(); renderChat(); }
+    function renderChat() { const inc=incidents.find(i=>i.id===currentId); if(inc) renderChatListHelper(inc.messages, 'chatBox'); }
+    function addIncident(e) { e.preventDefault(); const t=document.getElementById('inTitle').value, c=document.getElementById('inChild').value, m=document.getElementById('inMsg').value; const inc={id:'inc_'+Date.now(),title:t,child:c,updatedAt:Date.now(),messages:[{sender:profile,text:m}],gameplan:null}; incidents.unshift(inc); pushSharedState(); closeM('newIncidentModal'); selectInc(inc.id); generateIncidentReply(inc,m); }
+    function sendMsg(e) { e.preventDefault(); const i=document.getElementById('chatInput'), t=i.value.trim(); if(!t)return; i.value=''; const inc=incidents.find(x=>x.id===currentId); inc.messages.push({sender:profile,text:t}); renderChat(); pushSharedState(); generateIncidentReply(inc,t); }
+    async function generateIncidentReply(inc, userText) { const lid='l_'+Date.now(); inc.messages.push({sender:'Family OS (Sõber)',text:'Mõtlen kaasa...',tempId:lid}); renderChat(); const rep=await callGeminiAPI(inc.messages,userText,`Laps: ${inc.child}. Teema: ${inc.title}.`); inc.messages=inc.messages.filter(m=>!m.tempId); inc.messages.push({sender:'Family OS (Sõber)',text:rep}); pushSharedState(); renderChat(); }
+    async function makePlan() { const inc=incidents.find(i=>i.id===currentId); if(!inc)return; const btn=document.getElementById('btnPlan'); btn.innerText="⏳..."; const sum=await callGeminiAPI(inc.messages,`Koosta selle vestluse põhjal hästi lühike 4-punktine Sammude spikker lapsele ${inc.child}.`); inc.gameplan=sum; btn.innerText="📋 Uuenda Samme"; pushSharedState(); renderPlans(); tab('plans'); }
+    function renderPlans() { document.getElementById('plansList').innerHTML = incidents.filter(i=>i.gameplan).map(p=>`<div class="step-card bg-amber-50 border-2 border-amber-300 p-4 rounded-2xl space-y-2"><div class="flex justify-between"><h4 class="font-extrabold text-xs">${p.title}</h4><span class="text-[9px] bg-amber-200 px-2 rounded-full font-bold">${p.child}</span></div><div class="text-xs border-t border-amber-200 pt-2">${formatMsg(p.gameplan)}</div><div class="pt-2 flex justify-end no-print"><button onclick="tab('inc');selectInc('${p.id}')" class="text-xs font-bold text-indigo-700 bg-white border px-3 py-1 rounded-xl">💬 Jätka vestlust</button></div></div>`).join(''); }
+    function deleteCurrentIncident() { if(!confirm("Kustutada?"))return; incidents=incidents.filter(i=>i.id!==currentId); currentId=incidents[0]?.id||null; pushSharedState(); renderIncList(); if(currentId)selectInc(currentId); renderPlans(); }
 
-      const inc = {
-        id: 'inc_' + Date.now(),
-        title, child, updatedAt: Date.now(),
-        messages: [{ sender: profile, text: msg }],
-        gameplan: null
-      };
+    // --- SUHTE TEEMAD ---
+    function renderCoupleTopicList() { document.getElementById('coupleTopicList').innerHTML = coupleTopics.map(t => `<div onclick="selectCoupleTopic('${t.id}')" class="p-2.5 rounded-xl cursor-pointer border ${t.id===currentCoupleId?'bg-indigo-50 border-indigo-300':'bg-slate-50'}"><h4 class="font-bold text-xs line-clamp-1">${t.title}</h4><p class="text-[10px] text-slate-500 mt-0.5 line-clamp-1">${t.messages[t.messages.length-1]?.text||''}</p></div>`).join(''); }
+    function selectCoupleTopic(id) { currentCoupleId=id; const top=coupleTopics.find(t=>t.id===id); if(!top)return; document.getElementById('coupleChatTitle').innerText=top.title; renderCoupleTopicList(); renderCoupleChat(); }
+    function renderCoupleChat() { const top=coupleTopics.find(t=>t.id===currentCoupleId); if(top) renderChatListHelper(top.messages, 'coupleChatBox'); }
+    function addCoupleTopic(e) { e.preventDefault(); const t=document.getElementById('ctTitle').value, m=document.getElementById('ctMsg').value; const top={id:'cpl_'+Date.now(),title:t,messages:[{sender:profile,text:m}]}; coupleTopics.unshift(top); pushSharedState(); closeM('newCoupleTopicModal'); selectCoupleTopic(top.id); generateCoupleReply(top,m); }
+    function sendCoupleMsg(e) { e.preventDefault(); const i=document.getElementById('coupleChatInput'), t=i.value.trim(); if(!t)return; i.value=''; const top=coupleTopics.find(x=>x.id===currentCoupleId); top.messages.push({sender:profile,text:t}); renderCoupleChat(); pushSharedState(); generateCoupleReply(top,t); }
+    async function generateCoupleReply(top, userText) { const lid='cl_'+Date.now(); top.messages.push({sender:'Family OS (Sõber)',text:'Mõtlen kaasa...',tempId:lid}); renderCoupleChat(); const rep=await callGeminiAPI(top.messages,userText,"Ühine paarinõustamine: neutraalne, sõbralik, too välja mõlema poole võimalikud mõtted/lõksud ja uus lähenemine."); top.messages=top.messages.filter(m=>!m.tempId); top.messages.push({sender:'Family OS (Sõber)',text:rep}); renderCoupleChat(); pushSharedState(); }
+    function deleteCoupleTopic() { if(!confirm("Kustutada teema?"))return; coupleTopics=coupleTopics.filter(t=>t.id!==currentCoupleId); currentCoupleId=coupleTopics[0]?.id||null; pushSharedState(); renderCoupleTopicList(); if(currentCoupleId)selectCoupleTopic(currentCoupleId); }
 
-      incidents.unshift(inc);
-      saveData();
-      closeM('newIncidentModal');
-      selectInc(inc.id);
-      generateIncidentReply(inc, msg);
+    // --- PRIVAATNE CHAT ---
+    function renderPrivateChat() { renderChatListHelper(privateChats[profile] || [], 'privateChatBox'); }
+    async function sendPrivateMsg(e) { e.preventDefault(); const i=document.getElementById('privateChatInput'), t=i.value.trim(); if(!t)return; i.value=''; if(!privateChats[profile])privateChats[profile]=[]; privateChats[profile].push({sender:profile,text:t}); renderPrivateChat(); const lid='pl_'+Date.now(); privateChats[profile].push({sender:'Nõustaja (Salajane)',text:'Mõtlen kaasa...',tempId:lid}); renderPrivateChat(); const rep=await callGeminiAPI(privateChats[profile],t,`See on ${profile} privaatne vestlus.`); privateChats[profile]=privateChats[profile].filter(m=>!m.tempId); privateChats[profile].push({sender:'Nõustaja (Salajane)',text:rep}); renderPrivateChat(); localStorage.setItem('fos_private_chats',JSON.stringify(privateChats)); if(isCloud&&db)db.collection('family_os').doc(`private_${profile}`).set({messages:privateChats[profile],clientId:CLIENT_ID}); }
+
+    // --- KODUÕPE, PROFIILID, NÄDALAD, PÄEVIK, ROLLIMÄNG ---
+    function renderSchoolChat() { renderChatListHelper(schoolChat, 'schoolChatBox'); }
+    async function sendSchoolMsg(e) { e.preventDefault(); const i=document.getElementById('schoolChatInput'), t=i.value.trim(); if(!t)return; i.value=''; schoolChat.push({sender:profile,text:t}); renderSchoolChat(); const lid='sl_'+Date.now(); schoolChat.push({sender:'Family OS (Sõber)',text:'Mõtlen Nora jaoks parima viisi...',tempId:lid}); renderSchoolChat(); const rep=await callGeminiAPI(schoolChat,t,"Teema: Nora (7a) koduõpe."); schoolChat=schoolChat.filter(m=>!m.tempId); schoolChat.push({sender:'Family OS (Sõber)',text:rep}); renderSchoolChat(); pushSharedState(); }
+
+    function renderNoraSchoolGuide() {
+      const nora = familyProfiles.Nora;
+      document.getElementById('noraSchoolGuide').innerHTML = `
+        <div class="p-3 bg-purple-50 border border-purple-200 rounded-xl"><strong>1. Uhkus & Väärikus:</strong> Ära ütle "Vale!". Ütle: <em>"Hea katse! Uurime seda kohta koos nagu detektiivid."</em></div>
+        <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-xl"><strong>2. Hubane pesa & puudutus:</strong> Pehme pleed, soe jook ja kerge snäkk/näpuvaheline tegevus aitavad tal paremini keskenduda kui range vaikus.</div>
+        <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl"><strong>3. Valikutele reageerimine (${nora.hdType}):</strong> Anna kaks kindlat valikut: <em>"Kas alustame matemaatikast või lugemisest?"</em></div>
+        <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl"><strong>4. Kui tuleb nutt:</strong> Pane pliiats käest, tee 10s kalli: <em>"Mina teen esimese rea ette, sina teed teise."</em></div>
+      `;
     }
 
-    function sendMsg(e) {
-      e.preventDefault();
-      const input = document.getElementById('chatInput');
-      const text = input.value.trim();
-      if (!text || !currentId) return;
-      input.value = '';
-
-      const inc = incidents.find(i => i.id === currentId);
-      inc.messages.push({ sender: profile, text });
-      inc.updatedAt = Date.now();
-      renderChat();
-      saveData();
-      generateIncidentReply(inc, text);
+    function renderProfiles() {
+      document.getElementById('familyProfilesGrid').innerHTML = Object.keys(familyProfiles).map(k => {
+        const p = familyProfiles[k];
+        return `<div class="bg-white p-4 rounded-2xl border shadow-sm space-y-2 text-xs"><div class="flex justify-between items-start"><div class="flex items-center gap-2"><span class="text-2xl">${p.icon}</span><div><h3 class="font-extrabold text-sm">${p.name}</h3><p class="text-[10px] text-slate-500">${p.date} kell ${p.time} • ${p.place}</p></div></div><button onclick="openEditProfile('${k}')" class="text-[11px] bg-indigo-50 text-indigo-700 font-bold px-2.5 py-1 rounded-xl border">✏️ Muuda</button></div><div class="p-2 bg-slate-50 rounded-xl border text-[11px] space-y-0.5"><div><strong>🌟 Sünniplaan:</strong> ${p.zodiac}</div><div><strong>🐉 Hiina märk:</strong> ${p.chinese}</div><div><strong>🧬 Energiatüüp:</strong> <span class="text-indigo-700 font-bold">${p.hdType}</span></div></div><p class="text-slate-700 leading-relaxed">${p.summary}</p><div class="p-2 bg-amber-50/70 border border-amber-200 rounded-xl text-[11px]"><strong>⚡ Energia & Õppimine:</strong> ${p.hdDesc}</div></div>`;
+      }).join('');
+    }
+    function openEditProfile(k) { const p=familyProfiles[k]; document.getElementById('editProfKey').value=k; document.getElementById('editProfTitle').innerText=`Muuda: ${p.name}`; document.getElementById('epDate').value=p.date; document.getElementById('epTime').value=p.time; document.getElementById('epPlace').value=p.place; document.getElementById('epHdType').value=p.hdType; openM('editProfileModal'); }
+    function calcSunAndChinese(dateStr) {
+      const d=new Date(dateStr), yr=d.getFullYear(), m=d.getMonth()+1, day=d.getDate();
+      const animals=["Ahv","Kukk","Koer","Siga","Rott","Pühvel","Tiiger","Jänes","Draakon","Madu","Hobune","Kits"], elements=["Metall","Metall","Vesi","Vesi","Puit","Puit","Tuli","Tuli","Maa","Maa"];
+      const cYear=(m===1||(m===2&&day<4))?yr-1:yr; const chinese=`${elements[cYear%10]}-${animals[cYear%12]} (${cYear})`;
+      let sun="Kaljukits"; if((m==1&&day>=20)||(m==2&&day<=18))sun="Veevalaja"; else if((m==2&&day>=19)||(m==3&&day<=20))sun="Kalad"; else if((m==3&&day>=21)||(m==4&&day<=19))sun="Jäär"; else if((m==4&&day>=20)||(m==5&&day<=20))sun="Sõnn"; else if((m==5&&day>=21)||(m==6&&day<=20))sun="Kaksikud"; else if((m==6&&day>=21)||(m==7&&day<=22))sun="Vähk"; else if((m==7&&day>=23)||(m==8&&day<=22))sun="Lõvi"; else if((m==8&&day>=23)||(m==9&&day<=22))sun="Neitsi"; else if((m==9&&day>=23)||(m==10&&day<=22))sun="Kaalud"; else if((m==10&&day>=23)||(m==11&&day<=21))sun="Skorpion"; else if((m==11&&day>=22)||(m==12&&day<=21))sun="Ambur";
+      return {sun, chinese};
+    }
+    async function saveEditedProfile(runAI) {
+      const k=document.getElementById('editProfKey').value, p=familyProfiles[k];
+      p.date=document.getElementById('epDate').value; p.time=document.getElementById('epTime').value; p.place=document.getElementById('epPlace').value; p.hdType=document.getElementById('epHdType').value;
+      const calc=calcSunAndChinese(p.date); p.chinese=calc.chinese; if(!p.zodiac.includes(calc.sun))p.zodiac=`${calc.sun} Päike`;
+      if(runAI && localStorage.getItem('fos_ai_key')) { closeM('editProfileModal'); p.summary = await callGeminiAPI([],`Uuenda ${p.name} iseloomu ja suhtlusjuhise kirjeldust (sünniandmed: ${p.date} ${p.time} ${p.place}, energiatüüp: ${p.hdType}).`); }
+      pushSharedState(); renderProfiles(); renderNoraSchoolGuide(); closeM('editProfileModal');
     }
 
-    async function generateIncidentReply(inc, userText) {
-      setTimeout(() => {
-        inc.messages.push({
-          sender: 'Family OS (Sõbralik Tugi)',
-          text: `Tean hästi seda olukorda – sellised hetked võtavad vanemal viimasegi jõu ära.\n\n1. **Astu lapse juurde ja lasku silmade kõrgusele:** Ära räägi püsti seistes ülevalt alla. Võta temal käest kinni või pane käsi õlale.\n2. **Täpne lause lapsele:**\n> "Ma näen, et sul on praegu raske hoog sees. Me saame sellest koos üle. Ma ei luba haiget teha/asju loopida, aga ma olen siin su juures."\n3. **Anna 5 minutit vaikust:** Ära nõua vabandust ega loogikat enne, kui hingamine on aeglustunud.`
-        });
-        saveData();
-        renderChat();
-      }, 600);
-    }
+    function renderWeeks() { document.getElementById('weeksGrid').innerHTML = defaultWeeks.map(w=>{ const pr=weekProgress[w.id]||[false,false,false,false,false,false,false], cnt=pr.filter(Boolean).length; return `<div class="bg-white p-4 rounded-2xl border ${cnt===7?'border-emerald-400 bg-emerald-50/30':''} space-y-2 text-xs"><div class="flex justify-between font-extrabold"><span>${w.title}</span><span class="text-[9px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full">${w.cat}</span></div><p><strong>Eesmärk:</strong> ${w.goal}</p><p class="text-[11px] text-slate-500">${w.why}</p><div class="flex justify-between items-center pt-1"><div class="flex gap-1">${pr.map((v,di)=>`<button onclick="toggleWeekDay(${w.id},${di})" class="w-7 h-7 rounded-lg text-[10px] font-bold border ${v?'bg-emerald-500 text-white':'bg-slate-50 text-slate-500'}">P${di+1}</button>`).join('')}</div><span class="font-bold text-emerald-700">${cnt}/7</span></div></div>`; }).join(''); }
+    function toggleWeekDay(wId, dIdx) { if(!weekProgress[wId])weekProgress[wId]=[false,false,false,false,false,false,false]; weekProgress[wId][dIdx]=!weekProgress[wId][dIdx]; pushSharedState(); renderWeeks(); }
 
-    function makePlan() {
-      const inc = incidents.find(i => i.id === currentId);
-      if (!inc) return;
-      if (!inc.gameplan) {
-        inc.gameplan = `### 📋 SAMMUD: ${inc.title}\n*Seotud: ${inc.child}*\n\n1. **🛑 0–60 sek:** Astu vahele, võta käest kinni. Hinga 2x sügavalt välja.\n2. **🗣️ Sõnad:** "Ma ei luba seda teha, aga ma olen su juures ja aitan sul rahuneda."\n3. **⏳ Kestus:** 2–5 min vaikset kohalolu ilma loenguta.`;
-        saveData();
-        renderPlans();
-      }
-      tab('plans');
-    }
+    let roleplayHistory = [];
+    function startRoleplay() { const sc=document.getElementById('roleplayScenario').value; document.getElementById('roleplayBox').classList.remove('hidden'); roleplayHistory=[]; document.getElementById('roleplayTitle').innerText=document.getElementById('roleplayScenario').selectedOptions[0].text; let g=sc==='roma_milk'?"👦 Roma (3a): 'TAHAN KOHE!'":(sc==='nora_homework'?"👧 Nora (7a): 'Ma ei oska, ma olen loll!'":(sc==='siblings_fight'?"💥 Nora nutab: 'Roma lõi!'":"💑 Partner: 'Ma teen kõik üksi!'")); roleplayHistory.push({sender:'Simulaator',text:g}); renderRoleplayChat(); }
+    function closeRoleplay() { document.getElementById('roleplayBox').classList.add('hidden'); }
+    function renderRoleplayChat() { const b=document.getElementById('roleplayChat'); b.innerHTML=roleplayHistory.map(m=>`<div class="p-2 rounded-xl text-xs ${m.sender==='Sina'?'bg-indigo-600 text-white ml-6':'bg-slate-200 text-slate-900 mr-6'}"><div class="text-[9px] font-bold">${m.sender}</div><div>${formatMsg(m.text)}</div></div>`).join(''); b.scrollTop=b.scrollHeight; }
+    async function sendRoleplayMsg(e) { e.preventDefault(); const i=document.getElementById('roleplayInput'), t=i.value.trim(); if(!t)return; i.value=''; roleplayHistory.push({sender:'Sina',text:t}); renderRoleplayChat(); const rep=await callGeminiAPI(roleplayHistory,t,"Rollimäng: anna lühike Treeneri tagasiside vanema lausele ja vasta rollis."); roleplayHistory.push({sender:'Treener & Simulaator',text:rep}); renderRoleplayChat(); }
 
-    function renderPlans() {
-      const container = document.getElementById('plansList');
-      const plans = incidents.filter(i => i.gameplan);
-      if (!plans.length) {
-        container.innerHTML = '<p class="text-xs text-slate-400 col-span-2 text-center py-5">Sammude spikreid pole veel loodud. Vali juhtum ja vajuta "📋 Tee Sammud".</p>';
-        return;
-      }
-      container.innerHTML = plans.map(p => `
-        <div class="step-card bg-amber-50/70 border-2 border-amber-300 p-4 rounded-2xl shadow-sm space-y-2 relative">
-          <div class="flex justify-between items-start">
-            <h4 class="font-extrabold text-xs text-slate-900">${p.title}</h4>
-            <span class="text-[9px] bg-amber-200/80 text-amber-900 font-bold px-2 py-0.5 rounded-full">${p.child}</span>
-          </div>
-          <div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed border-t border-amber-200 pt-2 font-mono text-[11px]">${p.gameplan}</div>
-        </div>`).join('');
-    }
-
-    function deleteCurrentIncident() {
-      if (!confirm("Kustutada juhtum?")) return;
-      incidents = incidents.filter(i => i.id !== currentId);
-      currentId = incidents[0]?.id || null;
-      saveData();
-      renderIncList();
-      if (currentId) selectInc(currentId);
-    }
-
-    function renderCoupleChat() {
-      const box = document.getElementById('coupleChatBox');
-      box.innerHTML = coupleChat.map(m => `
-        <div class="flex flex-col ${m.sender.includes('Family OS') ? 'items-start' : 'items-end'}">
-          <span class="text-[9px] text-slate-400 mb-0.5 px-1">${m.sender}</span>
-          <div class="max-w-[90%] p-2.5 rounded-2xl ${m.sender.includes('Family OS') ? 'bg-slate-100 text-slate-800' : 'bg-indigo-600 text-white'}">
-            ${m.text}
-          </div>
-        </div>
-      `).join('');
-      box.scrollTop = box.scrollHeight;
-    }
-
-    function sendCoupleMsg(e) {
-      e.preventDefault();
-      const input = document.getElementById('coupleChatInput');
-      const text = input.value.trim();
-      if (!text) return;
-      input.value = '';
-      coupleChat.push({ sender: profile, text });
-      renderCoupleChat();
-      localStorage.setItem('fos_couple_chat', JSON.stringify(coupleChat));
-      setTimeout(() => {
-        coupleChat.push({
-          sender: 'Family OS (Paarinõustaja)',
-          text: `Aitäh selle teema tõstatamise eest! Väikeste laste kõrval on selline väsimus ja distantseerumine täiesti tavaline.\n\nSoovitus mõlemale: ärge lahendage seda süüdistustega. Võtke õhtul 3 minutit voodis, hoidke käest kinni ja öelge teineteisele: "Ma vajan sind ja ma tahan, et meil oleks hea olla."`
-        });
-        renderCoupleChat();
-        localStorage.setItem('fos_couple_chat', JSON.stringify(coupleChat));
-      }, 700);
-    }
-
-    function openM(id) { document.getElementById(id).classList.remove('hidden'); if(id==='editRulesModal') renderEditRules(); }
+    function requestSwitchProfile(t) { if(currentUnlockedProfile===t){setProfile(t);return;} pendingProfileTarget=t; document.getElementById('pinTargetName').innerText=`${t} profiil`; document.getElementById('pinIcon').innerText=t==='Veikko'?'🧔':'👩'; document.getElementById('pinInput').value=''; document.getElementById('pinError').classList.add('hidden'); openM('pinModal'); setTimeout(()=>document.getElementById('pinInput').focus(),100); }
+    function verifyPin() { if(document.getElementById('pinInput').value.trim()===userPins[pendingProfileTarget]){ currentUnlockedProfile=pendingProfileTarget; localStorage.setItem('fos_unlocked',currentUnlockedProfile); setProfile(pendingProfileTarget); closeM('pinModal'); } else document.getElementById('pinError').classList.remove('hidden'); }
+    function lockProfile() { currentUnlockedProfile=null; localStorage.removeItem('fos_unlocked'); switchCoupleSubTab('shared'); }
+    function setProfile(p) { profile=p; localStorage.setItem('fos_profile',p); document.getElementById('btnV').className=p==='Veikko'?'px-2 py-1 text-xs font-bold rounded-lg bg-white shadow-sm text-indigo-700':'px-2 py-1 text-xs font-bold rounded-lg text-slate-500'; document.getElementById('btnK').className=p==='Katre'?'px-2 py-1 text-xs font-bold rounded-lg bg-white shadow-sm text-rose-700':'px-2 py-1 text-xs font-bold rounded-lg text-slate-500'; document.getElementById('privateTabTitle').innerText=`${p} Salajane`; document.getElementById('privateHeaderName').innerText=`${p} Salajane Ruum`; renderPrivateChat(); generateDailySecretMission(true); }
+    async function generateDailySecretMission(isInit) { const card=document.getElementById('dailyMissionCard'), k=localStorage.getItem('fos_ai_key'); if(!isInit&&k){ card.innerHTML="<em>Koostan missiooni...</em>"; card.innerHTML=formatMsg(await callGeminiAPI([],`Koosta ${profile}-le tänaseks 1 ootamatu, soe, salajane üllatusmissioon partneri rõõmustamiseks.`)); return; } card.innerHTML = profile==='Veikko' ? "🎯 <strong>Võta täna õhtul üks kodune asi algusest lõpuni enda peale ilma küsimata!</strong>" : "🎯 <strong>Tunnusta Veikkot siiralt laste ees ja anna talle 15 min rahulikku aega koju jõudes.</strong>"; }
+    function tab(n) { ['inc','dash','couple','weeks','school','profiles','tracker','roleplay','plans'].forEach(t=>{ document.getElementById('p-'+t).classList.add('hidden'); document.getElementById('t-'+t).className='py-1.5 px-2.5 rounded-lg text-slate-500 whitespace-nowrap font-medium'; }); document.getElementById('p-'+n).classList.remove('hidden'); document.getElementById('t-'+n).className='py-1.5 px-2.5 rounded-lg bg-indigo-50 text-indigo-700 font-bold whitespace-nowrap'; }
+    function switchCoupleSubTab(sub) { if(sub==='private'&&currentUnlockedProfile!==profile){requestSwitchProfile(profile);return;} document.getElementById('viewSharedCouple').classList.toggle('hidden',sub==='private'); document.getElementById('viewPrivateCouple').classList.toggle('hidden',sub!=='private'); }
+    function saveTrackerLog() { trackerLogs.unshift({id:Date.now(),child:document.getElementById('trChild').value,behavior:document.getElementById('trBehavior').value,trigger:document.getElementById('trTrigger').value,time:new Date().toLocaleTimeString('et-EE',{hour:'2-digit',minute:'2-digit'}),date:new Date().toLocaleDateString('et-EE')}); pushSharedState(); closeM('logTrackerModal'); renderTrackerLogs(); }
+    function renderTrackerLogs() { const c=document.getElementById('trackerLogsList'); c.innerHTML=trackerLogs.length?trackerLogs.slice(0,10).map((l,i)=>`<div class="p-2 bg-slate-50 border rounded-xl flex justify-between text-xs"><div><strong>${l.child} • ${l.behavior}</strong><div class="text-[10px] text-slate-500">${l.trigger} (${l.date} ${l.time})</div></div><button onclick="trackerLogs.splice(${i},1);pushSharedState();renderTrackerLogs();" class="text-rose-500">&times;</button></div>`).join(''):'<p class="text-slate-400 text-center">Tühi.</p>'; const cnt={}; trackerLogs.forEach(l=>cnt[l.trigger]=(cnt[l.trigger]||0)+1); const top=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0]; if(top)document.getElementById('patternText').innerHTML=`Kõige sagedasem päästik on <strong>${top}</strong> (${cnt[top]}x).`; }
+    function renderAgreements() { document.getElementById('agreementsList').innerHTML = agreements.map((a,i)=>`<div class="p-2 bg-slate-50 border rounded-xl flex justify-between text-xs"><span>${a}</span><button onclick="agreements.splice(${i},1);pushSharedState();renderAgreements();" class="text-rose-500">&times;</button></div>`).join(''); }
+    function addAgreementPrompt() { const r=prompt("Uus kokkulepe:"); if(r){ agreements.push("🛡️ "+r); pushSharedState(); renderAgreements(); } }
+    function renderWins() { document.getElementById('winsList').innerHTML = wins.map((w,i)=>`<div class="p-2 bg-emerald-50 border rounded-xl flex justify-between text-xs"><span>${w}</span><button onclick="wins.splice(${i},1);pushSharedState();renderWins();" class="text-rose-500">&times;</button></div>`).join(''); }
+    function addWinPrompt() { const w=prompt("Mis hästi läks?"); if(w){ wins.unshift("✨ "+w); pushSharedState(); renderWins(); } }
+    function sendGratitude() { const t=document.getElementById('gratitudeInput').value.trim(); if(!t)return; document.getElementById('latestGratitude').innerText=`"${t}" – ${profile}`; pushSharedState(); document.getElementById('gratitudeInput').value=''; closeM('gratitudeModal'); }
+    function triggerSOS() { openM('sosModal'); if(isCloud&&db) db.collection('family_os').doc('sos_signal').set({sender:profile,timestamp:Date.now()}); }
+    function dismissSosAlert() { document.getElementById('partnerSosBanner').classList.add('hidden'); if(isCloud&&db) db.collection('family_os').doc('sos_signal').set({sender:null,timestamp:0}); }
+    function openM(id) { document.getElementById(id).classList.remove('hidden'); if(id==='editRulesModal')renderEditRules(); }
     function closeM(id) { document.getElementById(id).classList.add('hidden'); }
-
-    function checkAIStatus() {
-      const key = localStorage.getItem('fos_ai_key');
-      const dot = document.getElementById('aiDot');
-      const text = document.getElementById('aiBadgeText');
-      if (key && key.startsWith('sk-')) {
-        dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse';
-        text.innerText = '🤖 AI: Aktiivne';
-        document.getElementById('aiApiKeyInput').value = key;
-      }
-    }
-    async function saveAndTestAI() {
-      const key = document.getElementById('aiApiKeyInput').value.trim();
-      if (!key) return;
-      localStorage.setItem('fos_ai_key', key);
-      checkAIStatus();
-      closeM('aiModal');
-      alert("AI võti salvestatud!");
-    }
-    function clearAIKey() {
-      localStorage.removeItem('fos_ai_key');
-      document.getElementById('aiApiKeyInput').value = '';
-      checkAIStatus();
-    }
-
-    function saveData() {
-      localStorage.setItem('fos_incidents', JSON.stringify(incidents));
-      if (isCloud && db) db.collection('family_os').doc('main_data').set({ incidents, updatedAt: Date.now() });
-    }
-
-    function initFirebaseFromStorage() {
-      const configStr = localStorage.getItem('fos_firebase_config');
-      if (!configStr) return;
-      try {
-        const config = JSON.parse(configStr);
-        if (!firebase.apps.length) firebase.initializeApp(config);
-        db = firebase.firestore();
-        isCloud = true;
-        document.getElementById('syncBadge').className = 'text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 flex items-center gap-1 border border-emerald-200';
-        document.getElementById('syncBadge').innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Pilves';
-      } catch(err){}
-    }
-    function saveFirebaseConfig() {
-      const raw = document.getElementById('firebaseConfigInput').value.trim();
-      try {
-        const parsed = JSON.parse(raw);
-        localStorage.setItem('fos_firebase_config', JSON.stringify(parsed));
-        location.reload();
-      } catch(e){ alert("Vigane kood!"); }
-    }
-    function exportData() {
-      const data = { incidents, coupleChat, privateChats, commandments, trackerLogs, wins };
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-      a.download = `meie-pere-varukoopia.json`; a.click();
-    }
+    let timerSeconds=1200, timerInterval=null;
+    function toggleStudyTimer(){ const b=document.getElementById('timerBtn'); if(timerInterval){clearInterval(timerInterval);timerInterval=null;b.innerText="Jätka";}else{b.innerText="Paus";timerInterval=setInterval(()=>{if(timerSeconds>0){timerSeconds--;const m=Math.floor(timerSeconds/60).toString().padStart(2,'0'),s=(timerSeconds%60).toString().padStart(2,'0');document.getElementById('timerDisplay').innerText=`${m}:${s}`;}else{clearInterval(timerInterval);alert("🎉 20 min täis! Paus!");}},1000);} }
+    function resetStudyTimer(){ clearInterval(timerInterval);timerInterval=null;timerSeconds=1200;document.getElementById('timerBtn').innerText="Start";document.getElementById('timerDisplay').innerText="20:00"; }
+    function checkAIStatus() { const k=localStorage.getItem('fos_ai_key'); if(k&&k.startsWith('AIza')){ document.getElementById('aiDot').className='w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse'; document.getElementById('aiBadgeText').innerText='🤖 AI OK'; document.getElementById('aiApiKeyInput').value=k; } else { document.getElementById('aiDot').className='w-1.5 h-1.5 rounded-full bg-rose-500'; document.getElementById('aiBadgeText').innerText='⚙️ Lisa AI Võti'; } }
+    async function saveAndTestAI() { const k=document.getElementById('aiApiKeyInput').value.trim(), msg=document.getElementById('aiStatusMsg'); if(!k)return; msg.className='p-1.5 rounded-lg font-semibold bg-indigo-50 text-indigo-900 block'; msg.innerText='Kontrollin...'; try { const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${k}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:"Tere!"}]}]})}); if(res.ok){ localStorage.setItem('fos_ai_key',k); checkAIStatus(); pushSharedState(); msg.className='p-1.5 rounded-lg font-semibold bg-emerald-50 text-emerald-900 block'; msg.innerText='✅ Ühendus töötab ja jagatud teise telefoniga!'; setTimeout(()=>closeM('settingsModal'),1200); } else { const e=await res.json(); throw new Error(e.error?.message||"Vigane võti"); } } catch(e) { msg.className='p-1.5 rounded-lg font-semibold bg-rose-50 text-rose-900 block'; msg.innerText='❌ '+e.message; } }
+    function clearAIKey() { localStorage.removeItem('fos_ai_key'); document.getElementById('aiApiKeyInput').value=''; checkAIStatus(); }
+    function exportData() { const blob=new Blob([JSON.stringify({incidents,coupleTopics,schoolChat,privateChats,commandments,trackerLogs,wins,weekProgress,familyProfiles},null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='family-os-varukoopia.json'; a.click(); }
   </script>
 </body>
 </html>
